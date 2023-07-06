@@ -1,9 +1,36 @@
 import pandas as pd
 from pupil_labs.realtime_api.simple import discover_devices, Device
-from device_updater import update_device_ips
+from DeviceSearch import update_device_ips
+from DeviceThread import DeviceThread
+import time
 
 phone_file_path = "data/phone_info.csv"
-print(update_device_ips())
+phone_df, devices = update_device_ips()
+print("phone_df", phone_df)
+print("devices", devices)
+
+# Create a list to hold the DeviceThread instances
+device_threads = []
+
+# Iterate over the devices and create DeviceThread instances
+for index, device in enumerate(devices):
+    device_thread = DeviceThread(device)
+    device_threads.append(device_thread)
+
+
+time.sleep(5)
+
+for device_thread in device_threads:
+    device_thread.send_message("RECORDING START TEST", _time= time.time_ns())
+    device_thread.start_recording()
+
+
+time.sleep(15)
+
+# Example usage of the DeviceThread functions
+for device_thread in device_threads:
+    device_thread.send_message("RECORDING END TEST", _time= time.time_ns())
+    device_thread.stop_recording()
 
 exit()
 # Gather list of pupil device on the wifi 
