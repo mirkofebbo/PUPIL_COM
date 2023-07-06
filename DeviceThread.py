@@ -5,25 +5,37 @@ import time
 class DeviceThread:
 
     def __init__(self, device: Device):
+        # Start the values
         self.device = device
         self.recording = False
         self.thread = None
 
     def start_recording(self):
+        # Start the device/thread recording
         if not self.recording:
             self.recording = True
+            # START DEVICE RECORDING
             self.device.recording_start()
+            # START THREAD
             self.thread = threading.Thread(target=self._record)
             self.thread.start()
 
     def stop_recording(self):
+        # Stop the device/thread recording
         if self.recording:
+            # STOP DEVICE RECORDING
             self.device.recording_stop_and_save()
+            # KILLING THREAD
             self.recording = False
             if self.thread is not None:
                 self.thread.join()
+                if self.thread.is_alive():
+                    print("THREAD NOT DEAD")
+                else:
+                    print("THREAD DEAD")
 
     def kill(self):
+        # KILL
         self.recording = False
 
     def _record(self):
