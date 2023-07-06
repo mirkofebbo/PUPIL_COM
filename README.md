@@ -10,10 +10,11 @@ TOP:
     Double check time echo protocol 
 
 MEDIUM:
-
+    Check if it is recording 
+    Check if the glasses are connected 
 
 LOW:
-    Potato proof
+    Make the code otato proof
     Build a Proper app 
 # TO DO END ======================================
 
@@ -25,7 +26,7 @@ PUPIL LAB API DOCUMENTATION:
     https://pupil-labs-realtime-api.readthedocs.io/en/stable/api/index.html
 
 Main:
-    Currently testing ground
+    Current testing ground
 
 DeviceSearch: 
     Does a sweep to find nerby devices
