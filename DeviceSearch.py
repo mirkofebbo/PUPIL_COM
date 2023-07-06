@@ -33,6 +33,7 @@ def update_device_ips():
             update_ip(phone_info_df, device.phone_id, device.phone_ip)
         df.loc[len(df)] = temp_row
         print(temp_row)
+        
     return df, list_of_devices
         
         

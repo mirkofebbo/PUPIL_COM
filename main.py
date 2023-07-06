@@ -24,14 +24,19 @@ for device_thread in device_threads:
     device_thread.send_message("RECORDING START TEST", _time= time.time_ns())
     device_thread.start_recording()
 
+time.sleep(5)
 
-time.sleep(15)
+for device_thread in device_threads:
+    device_thread.status_update()
+
+time.sleep(10)
 
 # Example usage of the DeviceThread functions
 for device_thread in device_threads:
     device_thread.send_message("RECORDING END TEST", _time= time.time_ns())
     device_thread.stop_recording()
-
+    device_thread.kill()
+    
 exit()
 # Gather list of pupil device on the wifi 
 # list_of_devices = discover_devices(search_duration_seconds=2.0)
