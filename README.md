@@ -1,8 +1,12 @@
 # PUPIL_COM
+Mirko Febbo 
+Neurolive project 
+06/07/2023
+
 # TO DO START =====================================
 TEST:
     Loads of devices 
-    IS THE THREAD DEAD?
+    IS THE THREAD DEAD? Update Maybe ?
 
 TOP:
     UI
@@ -16,15 +20,20 @@ MEDIUM:
 LOW:
     Make the code otato proof
     Build a Proper app 
-    
-# TO DO END ======================================
 
+# LIBRARY ======================================
 PYTHON THREADING LIBRARY:
     https://docs.python.org/3/library/threading.html
 
 
 PUPIL LAB API DOCUMENTATION:
     https://pupil-labs-realtime-api.readthedocs.io/en/stable/api/index.html
+
+ATEXIT THREAD KILLING FUNCTION:
+    The atexit module defines functions to register and unregister cleanup functions. Functions thus registered are automatically executed upon normal interpreter termination. atexit runs these functions in the reverse order in which they were registered; if you register A, B, and C, at interpreter termination time they will be run in the order C, B, A.
+    https://docs.python.org/3/library/atexit.html
+
+# FILES ======================================
 
 Main:
     Current testing ground

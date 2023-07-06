@@ -35,13 +35,11 @@ class DeviceThread:
                     print("THREAD DEAD")
 
     def _record(self):
+        
         while self.recording:
-            # implement your recording logic here
+            
             print("Recording...")
             time.sleep(1)  # This is just an example
-
-
-
 
     def send_message(self, message, _time):
         try:
