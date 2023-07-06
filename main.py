@@ -2,12 +2,19 @@ import pandas as pd
 from pupil_labs.realtime_api.simple import discover_devices, Device
 from DeviceSearch import update_device_ips
 from DeviceThread import DeviceThread
+
+import atexit
 import time
 
 phone_file_path = "data/phone_info.csv"
 phone_df, devices = update_device_ips()
 print("phone_df", phone_df)
 print("devices", devices)
+
+# THREAD KILLER 
+def stop_all_device_threads():
+    for device_thread in device_threads:
+        device_thread.stop_recording()
 
 # Create a list to hold the DeviceThread instances
 device_threads = []
@@ -16,18 +23,20 @@ device_threads = []
 for index, device in enumerate(devices):
     device_thread = DeviceThread(device)
     device_threads.append(device_thread)
-
+    print(index, "DEVICE STARTED")
 
 time.sleep(5)
 
 for device_thread in device_threads:
-    device_thread.send_message("RECORDING START TEST", _time= time.time_ns())
     device_thread.start_recording()
+    device_thread.send_message("RECORDING START TEST", _time= time.time_ns())
+    print("RECORDING STARTED")
 
-time.sleep(5)
+time.sleep(10)
 
 for device_thread in device_threads:
-    device_thread.status_update()
+    device_thread.send_message("TEST", _time= time.time_ns())
+    print( "MESSAGE SENT")
 
 time.sleep(10)
 
@@ -35,9 +44,15 @@ time.sleep(10)
 for device_thread in device_threads:
     device_thread.send_message("RECORDING END TEST", _time= time.time_ns())
     device_thread.stop_recording()
-    device_thread.kill()
-    
+    print("RECORDING END")
+
+time.sleep(5)
+
+atexit.register(stop_all_device_threads)
+print("THREAD DIED")
+
 exit()
+
 # Gather list of pupil device on the wifi 
 # list_of_devices = discover_devices(search_duration_seconds=2.0)
 

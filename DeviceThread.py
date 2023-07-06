@@ -34,23 +34,13 @@ class DeviceThread:
                 else:
                     print("THREAD DEAD")
 
-    def kill(self):
-        # KILL
-        self.recording = False
-
     def _record(self):
         while self.recording:
             # implement your recording logic here
             print("Recording...")
             time.sleep(1)  # This is just an example
 
-    def status_update(self):
-        print(self.device.status_updates())
-        # temp_row = [self.device.phone_name, self.device.phone_ip, 
-        #     f"{self.device.battery_level_percent}%",
-        #     f"{round(self.device.memory_num_free_bytes / 1024**3)}GB", 
-        #     False,
-        #     self.recording ]
+
 
 
     def send_message(self, message, _time):

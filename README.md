@@ -16,6 +16,7 @@ MEDIUM:
 LOW:
     Make the code otato proof
     Build a Proper app 
+    
 # TO DO END ======================================
 
 PYTHON THREADING LIBRARY:
