@@ -14,7 +14,8 @@ TOP:
     Double check time echo protocol 
     Add data maker/csv mega file.
 MEDIUM:
-    Check if it is recording 
+    Add static message button for each events 
+    Check if the device is recording 
     Check if the glasses are connected 
 
 LOW:
@@ -36,17 +37,23 @@ ATEXIT THREAD KILLING FUNCTION:
 # FILES ======================================
 
 Main:
+    UI
     Current testing ground
 
 DeviceSearch: 
     Does a sweep to find nerby devices
     Retrun a list of device and a df with basic status update on the device.
+    Now included in DeviceSystem 
+
+DeviceSystem:
+    A object responsible for all the devices comunication and connection
+    Have a constant search for new device every 30 sec 
 
 DeviceThread:
     Start a Thread on the start of the recording.
     Using this thread the user can:
+        kill threads
         Start/Stop recording 
         send custom message using time echo protocol:
-        
         https://pupil-labs-realtime-api.readthedocs.io/en/stable/api/async.html#module-pupil_labs.realtime_api.time_echo
 
