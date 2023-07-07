@@ -3,7 +3,6 @@ from pupil_labs.realtime_api.simple import discover_devices, Device
 import PySimpleGUI as sg
 from DeviceSystem import DeviceSystem
 
-import atexit
 import time
 
 device_system = DeviceSystem()

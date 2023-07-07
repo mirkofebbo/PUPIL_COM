@@ -12,7 +12,6 @@ class DeviceSystem:
         self.devices = []
         self.device_discovery_stop_event = threading.Event()  # Added stop event
         self.device_discovery_thread = threading.Thread(target=self.update_device_ips)
-        self.device_discovery_thread.daemon = True  # Set the thread as a daemon thread
         self.device_discovery_thread.start()
     
     def update_device_ips(self):
@@ -41,8 +40,9 @@ class DeviceSystem:
                 self.devices = list_of_devices
                 self.start_devices_thread()  # Start threads for newly discovered devices
 
-                # Sleep for 30 seconds before checking for new devices again
-                time.sleep(30)
+
+                # Sleep for 10 seconds before checking for new devices again
+                time.sleep(10)
         
     # ======= FUNCTIONS===================================================
     # Iterate over the devices if one is not specify to perform an action 

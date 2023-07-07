@@ -8,11 +8,15 @@ TEST:
     Loads of devices 
     IS THE THREAD DEAD? Update Maybe ?
 
+BUG:
+    Python terminal sometimes never stop, meaning that some threads are still not closing
+    
 TOP:
     UI
-    Master Data Frame 
     Double check time echo protocol 
     Add data maker/csv mega file.
+    Handle device drop
+
 MEDIUM:
     Add static message button for each events 
     Check if the device is recording 
@@ -29,10 +33,6 @@ PYTHON THREADING LIBRARY:
 
 PUPIL LAB API DOCUMENTATION:
     https://pupil-labs-realtime-api.readthedocs.io/en/stable/api/index.html
-
-ATEXIT THREAD KILLING FUNCTION:
-    The atexit module defines functions to register and unregister cleanup functions. Functions thus registered are automatically executed upon normal interpreter termination. atexit runs these functions in the reverse order in which they were registered; if you register A, B, and C, at interpreter termination time they will be run in the order C, B, A.
-    https://docs.python.org/3/library/atexit.html
 
 # FILES ======================================
 
