@@ -3,14 +3,14 @@ Mirko Febbo
 Neurolive project 
 06/07/2023
 
-# TO DO START =====================================
+# TO DO START
 TEST:
     Loads of devices 
     IS THE THREAD DEAD? Update Maybe ?
 
 BUG:
     Python terminal sometimes never stop, meaning that some threads are still not closing
-    
+
 TOP:
     UI
     Double check time echo protocol 
@@ -26,7 +26,7 @@ LOW:
     Make the code otato proof
     Build a Proper app 
 
-# LIBRARY ======================================
+# LIBRARY
 PYTHON THREADING LIBRARY:
     https://docs.python.org/3/library/threading.html
 
@@ -34,7 +34,7 @@ PYTHON THREADING LIBRARY:
 PUPIL LAB API DOCUMENTATION:
     https://pupil-labs-realtime-api.readthedocs.io/en/stable/api/index.html
 
-# FILES ======================================
+# FILES
 
 Main:
     UI
