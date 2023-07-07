@@ -25,11 +25,15 @@ sg.theme('MyCreatedTheme')
 layout = [
     [sg.Text("Device Manager")],
     [
-     sg.Button('Start Recording', key="-START-REC-"), 
-     sg.Button('Stop Recording', key="-STOP-REC-"),
-     sg.Button('Kill all', key="-KILLING-"),
+        sg.Button("Trigger",           key="-TRIGGER-"),
+        sg.Button('Start Recording',   key="-START-REC-"), 
+        sg.Button('Stop Recording',    key="-STOP-REC-"),
+        sg.Button('Kill all',          key="-KILLING-"),
      ],
-    [sg.Output(size=(60,20), key='-OUTPUT-')]
+    [
+        sg.Button("SEND",           key="-SEND-", bind_return_key=True), 
+        sg.Input("",                key="-MESSAGE-")],
+    [sg.Output(size=(60,20),        key='-OUTPUT-')]
 ]
 
 # Create the window
@@ -48,21 +52,36 @@ while True:
         device_system.stop_device_threads()
 
     # When the user presses a button, you can update devices, start or stop recording
-    if event == '-UPDATE-DEVICES-':
-        window['-OUTPUT-'].update('Updating devices...')
-        phone_df, devices = device_system.update_device_ips()
-        device_system.start_devices_thread(u_time = time.time_ns())
-        # Call the function to update devices here
+    # if event == '-UPDATE-DEVICES-':
+    #     window['-OUTPUT-'].update('Updating devices...')
+    #     phone_df, devices = device_system.update_device_ips()
+    #     device_system.start_devices_thread(u_time = time.time_ns())
 
+    # START THE RECORDING 
     if event == '-START-REC-':
         window['-OUTPUT-'].update('Starting recording...')
         device_system.start_device_recording(u_time = time.time_ns())
-        # Call the function to start recording here
 
+    # STOP THE RECORDING 
     if event == '-STOP-REC-':
-        window['-OUTPUT-'].update('Stopping recording...')
+        window['-OUTPUT-'].update('Stopping recording...') 
         device_system.end_device_recording(u_time = time.time_ns())
-        # Call the function to stop recording here
+
+     # SEND CUSTOM MESSAGE 
+    if event == "-SEND-" :
+        message = values["-MESSAGE-"]
+        u_time = time.time_ns()
+        device_system.send_device_messages(u_time, message)
+        window["-MESSAGE-"].update("")
+        window['-OUTPUT-'].update(message) 
+
+    # SEND TRIGGER
+    if event == "-TRIGGER-":
+        message = values["-MESSAGE-"]
+        u_time = time.time_ns()
+        device_system.send_device_messages(u_time, message)
+        window["-MESSAGE-"].update("")
+        window['-OUTPUT-'].update('TRIGGER') 
 
 # Finish up by removing from the screen
 window.close()

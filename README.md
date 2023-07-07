@@ -10,6 +10,7 @@ TEST:
 
 BUG:
     Python terminal sometimes never stop, meaning that some threads are still not closing
+    Stoping recording does not work as well as when I had it out of the DeviceSystem no freeze the software
 
 TOP:
     UI

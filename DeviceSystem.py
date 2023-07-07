@@ -54,7 +54,6 @@ class DeviceSystem:
                 device_thread = DeviceThread(device)
                 self.device_threads.append(device_thread)
 
-
     # THREAD KILLER 
     def stop_device_threads(self, device_id=None):
         for device_thread in self.device_threads:
