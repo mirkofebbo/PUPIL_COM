@@ -12,7 +12,7 @@ TOP:
     UI
     Master Data Frame 
     Double check time echo protocol 
-
+    Add data maker/csv mega file.
 MEDIUM:
     Check if it is recording 
     Check if the glasses are connected 

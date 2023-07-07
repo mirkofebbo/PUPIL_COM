@@ -41,12 +41,12 @@ class DeviceThread:
             print("Recording...")
             time.sleep(1)  # This is just an example
 
-    def send_message(self, message, _time):
+    def send_message(self, message, u_time):
         try:
             estimate = self.device.estimate_time_offset()
             u_time_offset = estimate.time_offset_ms.mean *1000000  # Convert MS to NS 
-            newtime = _time - u_time_offset
-            event = self.device.send_event(f'{message} o:{u_time_offset} t:{_time}', event_timestamp_unix_ns=newtime)
+            newtime = u_time - u_time_offset
+            event = self.device.send_event(f'{message} o:{u_time_offset} t:{u_time}', event_timestamp_unix_ns=newtime)
             print(event)
 
         except:
