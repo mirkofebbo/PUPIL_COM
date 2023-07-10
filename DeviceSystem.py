@@ -40,10 +40,8 @@ class DeviceSystem:
                         update_ip(self.phone_info_df, device.phone_id, device.phone_ip)
                     
                     df.loc[len(df)] = temp_row
-                    print(temp_row)
 
                 self.current_device_info = df   
-                print(df)
                 self.devices = list_of_devices
                 self.start_devices_thread()  # Start threads for newly discovered devices
 
