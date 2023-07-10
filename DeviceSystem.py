@@ -7,17 +7,21 @@ import time
 class DeviceSystem:
 
     def __init__(self, phone_file_path="data/phone_info.csv"):
-        self.phone_file_path = phone_file_path
-        self.device_threads = []
-        self.devices = []
+        self.phone_file_path            = phone_file_path
+        self.device_threads             = []
+        self.phone_info_df              = []
+        self.devices                    = []
+        self.current_device_info        = pd.DataFrame( columns=['LETTER', 'IP', 'BATTERY', 'STORAGE', 'GLASSES_CONNECTED', "RECORDING"])
         self.device_discovery_stop_event = threading.Event()  # Added stop event
-        self.device_discovery_thread = threading.Thread(target=self.update_device_ips)
+        self.device_discovery_thread    = threading.Thread(target=self.update_device_ips)
+        
+
         self.device_discovery_thread.start()
-    
+
     def update_device_ips(self):
         while not self.device_discovery_stop_event.is_set():  # Stop when event is set
                 df = pd.DataFrame( columns=['LETTER', 'IP', 'BATTERY', 'STORAGE', 'GLASSES_CONNECTED', "RECORDING"] )
-                phone_info_df = pd.read_csv(self.phone_file_path, index_col=False)
+                self.phone_info_df = pd.read_csv(self.phone_file_path, index_col=False)
 
                 def update_ip(df, device_id, new_ip):
                     index = df[df['ID'] == device_id].index[0]
@@ -32,17 +36,22 @@ class DeviceSystem:
                                 False,
                                 False]
 
-                    if phone_info_df[phone_info_df['ID'] == device.phone_id]['IP'].values[0] != device.phone_ip:
-                        update_ip(phone_info_df, device.phone_id, device.phone_ip)
+                    if self.phone_info_df[self.phone_info_df['ID'] == device.phone_id]['IP'].values[0] != device.phone_ip:
+                        update_ip(self.phone_info_df, device.phone_id, device.phone_ip)
+                    
                     df.loc[len(df)] = temp_row
                     print(temp_row)
 
+                self.current_device_info = df   
+                print(df)
                 self.devices = list_of_devices
                 self.start_devices_thread()  # Start threads for newly discovered devices
 
-
                 # Sleep for 10 seconds before checking for new devices again
                 time.sleep(10)
+
+                # sg.Window.write_event_value('-TABLE-', df.values)
+
         
     # ======= FUNCTIONS===================================================
     # Iterate over the devices if one is not specify to perform an action 

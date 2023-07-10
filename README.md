@@ -6,7 +6,7 @@ Neurolive project
 # TO DO START
 TEST:
     Loads of devices 
-    IS THE THREAD DEAD? Update Maybe ?
+    IS THE THREAD DEAD? Update: Maybe ?
 
 BUG:
     Python terminal sometimes never stop, meaning that some threads are still not closing
