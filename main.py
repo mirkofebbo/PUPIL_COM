@@ -5,6 +5,7 @@ from DeviceSystem import DeviceSystem
 from datetime import date, datetime
 import time
 import os
+from Heartbeat import Heartbeat
 
 device_system = DeviceSystem()
 prev_device_info = device_system.current_device_info.copy()  # To keep track of previous state
@@ -14,12 +15,12 @@ file_path = f'data/{today}.csv'
 
 if(os.path.exists(file_path)):
     humain_time = time.strftime("%H:%M:%S", time.localtime())
-    temp_data = [time.time_ns(), str(humain_time), "APP START"]
+    temp_data = [time.time_ns(), str(humain_time), "-APP-START-"]
     df = pd.read_csv(file_path, index_col=False)
     df.loc[len(df.index)] = temp_data
 else:
     humain_time = time.strftime("%H:%M:%S", time.localtime())
-    temp_data = [[time.time_ns(), str(humain_time), "APP START"]]
+    temp_data = [[time.time_ns(), str(humain_time), "-APP-START-"]]
     df = pd.DataFrame(temp_data, columns=['time', 'human time', 'message'])
     df.to_csv(file_path, index=False)
 
@@ -52,7 +53,6 @@ layout = [
     [sg.Text("Device Manager")],
     [
         sg.Button("Trigger",           key="-TRIGGER-"),
-        sg.Button('TEST',              key="-TEST-"),
         sg.Button('Start Recording',   key="-START-REC-"), 
         sg.Button('Stop Recording',    key="-STOP-REC-"),
         sg.Button('Kill all',          key="-KILLING-"),
@@ -71,7 +71,7 @@ layout = [
 layout.append([sg.Multiline(size=(66,10), key='-LOGBOX-')])
 # Create the window
 window = sg.Window("PUPIL V1", layout, keep_on_top=False, location = (705, 125))
-
+heartbeat = Heartbeat(log_data, device_system)
 
 # Event loop
 while True:
@@ -87,7 +87,7 @@ while True:
     if event == '-KILLING-':
         df.to_csv(file_path, index=False)
         device_system.stop_device_threads()
-        
+
     # UPDATE TABLE ON NEW DATA
     if not device_system.current_device_info.equals(prev_device_info):
         window['-TABLE-'].update(values=[list(row) for row in device_system.current_device_info.values])
@@ -104,7 +104,6 @@ while True:
     if event == '-DATAFRAME_UPDATED-': # called in DeviceSystem.py
         window['-TABLE-'].update(values=device_system.current_device_info.values.tolist())
         window.refresh()
-
 
     # STOP THE RECORDING 
     if event == '-STOP-REC-':
@@ -128,7 +127,13 @@ while True:
         device_system.send_device_messages(clicked_time, message)
         log_data(message, u_time=clicked_time)
         
+    # HEARTBEAT UPDATE
+    # if(time.time() - heartbeat_update > 10):
+    #     message = "H"
+    #     log_data(message, time.time())   
+    #     heartbeat_update = time.time()
 
+    heartbeat.update()
 # Finish up by removing from the screen
 window.close()
 
