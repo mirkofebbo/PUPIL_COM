@@ -9,38 +9,35 @@ class DeviceThread:
         self.device = device
         self.recording = False
         self.thread = None
+        self.start_time = None  # Add a start_time attribute
 
     def start_recording(self):
-        # Start the device/thread recording
         if not self.recording:
             self.recording = True
-            # START DEVICE RECORDING
+            self.start_time = time.time()  # Save the current time when recording starts
             self.device.recording_start()
-            # START THREAD
             self.thread = threading.Thread(target=self._record)
             self.thread.start()
 
     def stop_recording(self):
         # Stop the device/thread recording
         if self.recording:
-            # STOP DEVICE RECORDING
-            self.device.recording_stop_and_save()
-            # KILLING THREAD
             self.recording = False
+            self.start_time = None  # Reset start_time when recording stops
+            self.device.recording_stop_and_save()
             if self.thread is not None:
                 self.thread.join()
                 if self.thread.is_alive():
-                    print("THREAD NOT DEAD")
+                    print("DEVICE NOT DEAD")
                 else:
-                    print("THREAD DEAD")
+                    print("DEVICE DEAD")
 
     def _record(self):
         
         while self.recording:
             
-            print("Recording...")
-            time.sleep(1)  # This is just an example
-
+            time.sleep(1) 
+            
     def send_message(self, message, u_time):
         try:
             estimate = self.device.estimate_time_offset()
@@ -51,3 +48,4 @@ class DeviceThread:
 
         except:
             print(f'Device not found')
+

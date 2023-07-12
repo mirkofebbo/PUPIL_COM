@@ -10,12 +10,9 @@ TEST:
 
 BUG:
     Python terminal sometimes never stop, meaning that some threads are still not closing
-    Stoping recording does not work as well as when I had it out of the DeviceSystem no freeze the software
 
 TOP:
-    UI
     Double check time echo protocol 
-    Add data maker/csv mega file.
     Handle device drop
 
 MEDIUM:
@@ -24,9 +21,10 @@ MEDIUM:
     Check if the glasses are connected 
 
 LOW:
-    Make the code otato proof
+    Make the code potato proof
     Build a Proper app 
-
+    Add recording timer for each device
+    
 # LIBRARY
 PYTHON THREADING LIBRARY:
     https://docs.python.org/3/library/threading.html
@@ -42,7 +40,7 @@ Main:
     Current testing ground
 
 DeviceSearch: 
-    Does a sweep to find nerby devices
+    Thread that does a sweep to find nerby devices
     Retrun a list of device and a df with basic status update on the device.
     Now included in DeviceSystem 
 
@@ -58,3 +56,6 @@ DeviceThread:
         send custom message using time echo protocol:
         https://pupil-labs-realtime-api.readthedocs.io/en/stable/api/async.html#module-pupil_labs.realtime_api.time_echo
 
+Heartbeat:
+    Thread that call to send a message every 10sec 
+    

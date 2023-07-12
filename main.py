@@ -6,6 +6,7 @@ from datetime import date, datetime
 import time
 import os
 from Heartbeat import Heartbeat
+import sys
 
 device_system = DeviceSystem()
 prev_device_info = device_system.current_device_info.copy()  # To keep track of previous state
@@ -72,6 +73,7 @@ layout.append([sg.Multiline(size=(66,10), key='-LOGBOX-')])
 # Create the window
 window = sg.Window("PUPIL V1", layout, keep_on_top=False, location = (705, 125))
 heartbeat = Heartbeat(log_data, device_system)
+heartbeat.start()
 
 # Event loop
 while True:
@@ -82,11 +84,11 @@ while True:
         df.to_csv(file_path, index=False)
         device_system.stop_device_threads()
         break
-
     # KILL all thread
     if event == '-KILLING-':
         df.to_csv(file_path, index=False)
         device_system.stop_device_threads()
+        heartbeat.stop()
 
     # UPDATE TABLE ON NEW DATA
     if not device_system.current_device_info.equals(prev_device_info):
@@ -95,19 +97,20 @@ while True:
         
     # START THE RECORDING 
     if event == '-START-REC-':
-        message = '-START-REC-'
+        message = '-START_REC-'
         u_time = time.time_ns()
         device_system.start_device_recording(u_time)
         log_data(message, u_time)
-
+        
     # UPDATE TABLE DATA
     if event == '-DATAFRAME_UPDATED-': # called in DeviceSystem.py
         window['-TABLE-'].update(values=device_system.current_device_info.values.tolist())
+        window['-TABLE-'].update(values=[list(row) for row in device_system.current_device_info.values])
         window.refresh()
 
     # STOP THE RECORDING 
     if event == '-STOP-REC-':
-        message = '-STOP-REC-'
+        message = '-STOP_REC-'
         u_time = time.time_ns()
         log_data(message, u_time)
         device_system.end_device_recording(u_time)
@@ -133,8 +136,8 @@ while True:
     #     log_data(message, time.time())   
     #     heartbeat_update = time.time()
 
-    heartbeat.update()
 # Finish up by removing from the screen
 window.close()
-
-exit()
+print('yo moma')
+sys.exit()
+print('yo dady')

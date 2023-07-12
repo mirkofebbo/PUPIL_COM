@@ -12,12 +12,13 @@ class DeviceSystem:
         self.phone_info_df              = []
         self.devices                    = []
         self.current_device_info        = pd.DataFrame( columns=['LETTER', 'IP', 'BATTERY', 'STORAGE', 'GLASSES_CONNECTED', "RECORDING"])
-        self.device_discovery_stop_event = threading.Event()  # Added stop event
+        self.device_discovery_stop_event = threading.Event()  # Added stop event to KILL
         self.device_discovery_thread    = threading.Thread(target=self.update_device_ips)
-        
-
         self.device_discovery_thread.start()
 
+    # Get a list of reachable devices 
+    # get device info
+    # If the device is already discovered, update the info
     def update_device_ips(self):
         while not self.device_discovery_stop_event.is_set():  # Stop when event is set
                 df = pd.DataFrame( columns=['LETTER', 'IP', 'BATTERY', 'STORAGE', 'GLASSES_CONNECTED', "RECORDING"] )
@@ -30,11 +31,13 @@ class DeviceSystem:
 
                 list_of_devices = discover_devices(search_duration_seconds=5.0)
                 for device in list_of_devices:
-                    temp_row = [device.phone_name, device.phone_ip, 
+                    temp_row = [
+                                device.phone_name, device.phone_ip, 
                                 f"{device.battery_level_percent}%",
                                 f"{round(device.memory_num_free_bytes / 1024**3)}GB", 
                                 False,
-                                False]
+                                False
+                                ]
 
                     if self.phone_info_df[self.phone_info_df['ID'] == device.phone_id]['IP'].values[0] != device.phone_ip:
                         update_ip(self.phone_info_df, device.phone_id, device.phone_ip)
@@ -63,14 +66,19 @@ class DeviceSystem:
 
     # THREAD KILLER 
     def stop_device_threads(self, device_id=None):
+        # Kill each device thread
         for device_thread in self.device_threads:
             if device_id is None or device_thread.device.phone_id == device_id:
                 device_thread.stop_recording()
 
         # Additionally stop the device discovery thread
         self.device_discovery_stop_event.set()  # Stop the thread
-        self.device_discovery_thread.join()  # Wait for the thread to finish
-        print("UPDATE THREAD WAS MURDERED")
+        if self.device_discovery_thread is not None:
+                self.device_discovery_thread.join()
+                if self.device_discovery_thread.is_alive():
+                    print("UPDATE NOT DEAD")
+                else:
+                    print("UPDATE DEAD")
 
     # START RECORDING 
     def start_device_recording(self, u_time, device_id=None):
