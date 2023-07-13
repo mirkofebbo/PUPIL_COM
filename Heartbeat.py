@@ -28,14 +28,18 @@ class Heartbeat:
 
     def _run(self):
         while not self.stop_event.is_set():
-            current_time = time.time()
-            # This syntax is to make sure a message is indeed being sent even if it is not exactly 10sec
-            if current_time - self.last_update_time >= self.interval: 
-                u_time = time.time_ns()
-                message = "-H-"
-                self.log_data(message, u_time)
-                self.device_system.send_device_messages(u_time, message) 
-                self.last_update_time = current_time
+                current_time = time.time()
+                time_left = self.interval - (current_time - self.last_update_time)
 
-            # Wait for a small amount of time to avoid busy waiting
-            time.sleep(0.01)
+                # If it's time to send a heartbeat message
+                if time_left <= 0:
+                    u_time = time.time_ns()
+                    message = "-H-"
+                    self.log_data(message, u_time)
+                    self.device_system.send_device_messages(u_time, message) 
+                    self.last_update_time = current_time
+                    time_left = self.interval  # Reset the time left to the full interval
+
+                # Wait for the remaining time until the next interval,
+                # but not more than 0.01 sec to be able to react to the stop_event promptly
+                time.sleep(min(time_left, 0.01))

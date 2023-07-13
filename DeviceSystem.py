@@ -107,4 +107,5 @@ class DeviceSystem:
         for device_thread in self.device_threads:
             if device_id is None or device_thread.device.phone_id == device_id:
                 device_thread.queue_message(message, u_time)
-                print("MESSAGE SENT")
+        print("MESSAGE SENT TO ALL DEVICES ")
+
