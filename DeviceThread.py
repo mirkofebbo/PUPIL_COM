@@ -21,18 +21,23 @@ class DeviceThread:
             self.thread = threading.Thread(target=self._process_messages)
             self.thread.start()
 
-    def stop_recording(self):
+    #KILLING THEM SOFTLY 
+    # Send the message to the device
+    def stop_recording_without_joining(self):
         # Stop the device/thread recording
         if self.recording_event.is_set():
             self.recording_event.clear()  # Set the event flag to False
             self.start_time = None  # Reset start_time when recording stops
             self.device.recording_stop_and_save()
-            if self.thread is not None:
-                self.thread.join()
-                if self.thread.is_alive():
-                    print("DEVICE NOT DEAD")
-                else:
-                    print("DEVICE DEAD")
+    
+    # KILL THE THREAD 
+    def join_thread(self):
+        if self.thread is not None:
+            self.thread.join()
+            if self.thread.is_alive():
+                print("DEVICE NOT DEAD")
+            else:
+                print("DEVICE DEAD")
 
     def _process_messages(self):
         # Process messages in the queue while recording

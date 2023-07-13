@@ -43,6 +43,7 @@ class DeviceSystem:
                     filtered_df = self.phone_info_df[self.phone_info_df['ID'] == device.phone_id]
                     if not filtered_df.empty and filtered_df['IP'].values[0] != device.phone_ip:
                         update_ip(self.phone_info_df, device.phone_id, device.phone_ip)
+
                     
                     df.loc[len(df)] = temp_row
 
@@ -92,11 +93,14 @@ class DeviceSystem:
                 
     # END RECORDING 
     def end_device_recording(self, u_time, device_id=None):
+        # Send stop command to all devices and threads
         for device_thread in self.device_threads:
-            if device_id is None or device_thread.device.phone_id == device_id:
-                device_thread.queue_message("RECORDING END", u_time)
-                device_thread.stop_recording()
-                print("RECORDING END")
+            device_thread.stop_recording_without_joining()
+
+        # Now wait for all threads to join
+        for device_thread in self.device_threads:
+            device_thread.join_thread()
+
 
     # SEND MESSAGES 
     def send_device_messages(self, u_time, message, device_id=None):
