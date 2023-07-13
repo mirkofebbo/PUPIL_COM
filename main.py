@@ -71,8 +71,8 @@ layout = [
 layout.append([sg.Multiline(size=(66,10), key='-LOGBOX-')])
 # Create the window
 window = sg.Window("PUPIL V1", layout, keep_on_top=False, location = (705, 125))
-heartbeat = Heartbeat(log_data, device_system)
-heartbeat.start()
+# heartbeat = Heartbeat(log_data, device_system)
+# heartbeat.start()
 
 # Event loop
 while True:
@@ -83,12 +83,12 @@ while True:
         df.to_csv(file_path, index=False)
         device_system.stop_device_threads()
         break
-    
+
     # KILL all thread
     if event == '-KILLING-':
         df.to_csv(file_path, index=False)
         device_system.stop_device_threads()
-        heartbeat.stop()
+        # heartbeat.stop()
 
     # UPDATE TABLE ON NEW DATA
     if not device_system.current_device_info.equals(prev_device_info):
