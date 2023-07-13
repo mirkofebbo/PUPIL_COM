@@ -6,7 +6,6 @@ from datetime import date, datetime
 import time
 import os
 from Heartbeat import Heartbeat
-import sys
 
 device_system = DeviceSystem()
 prev_device_info = device_system.current_device_info.copy()  # To keep track of previous state
@@ -139,5 +138,4 @@ while True:
 # Finish up by removing from the screen
 window.close()
 print('yo moma')
-sys.exit()
-print('yo dady')
+exit()
