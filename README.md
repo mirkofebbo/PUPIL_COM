@@ -9,8 +9,9 @@ TEST:
     IS THE THREAD DEAD? Update: Maybe ?
 
 BUG:
-    Python terminal sometimes never stop, meaning that some threads are still not closing
-
+    Python terminal sometimes never stop, meaning that some threads are still not closing?
+        tryed: os.exit() + sys.exit() and exit() none worked
+        
 TOP:
     Double check time echo protocol 
     Handle device drop
