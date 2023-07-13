@@ -44,7 +44,7 @@ class DeviceThread:
             u_time_offset = estimate.time_offset_ms.mean *1000000  # Convert MS to NS 
             newtime = u_time - u_time_offset
             event = self.device.send_event(f'{message} o:{u_time_offset} t:{u_time}', event_timestamp_unix_ns=newtime)
-            print(event)
+            # print(event)
 
         except:
             print(f'Device not found')

@@ -83,6 +83,7 @@ while True:
         df.to_csv(file_path, index=False)
         device_system.stop_device_threads()
         break
+    
     # KILL all thread
     if event == '-KILLING-':
         df.to_csv(file_path, index=False)

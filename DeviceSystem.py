@@ -29,7 +29,8 @@ class DeviceSystem:
                     df.at[index, 'IP'] = new_ip
                     df.to_csv(self.phone_file_path, index=False)
 
-                list_of_devices = discover_devices(search_duration_seconds=5.0)
+                list_of_devices = discover_devices(search_duration_seconds=10.0)
+                print(list_of_devices)
                 for device in list_of_devices:
                     temp_row = [
                                 device.phone_name, device.phone_ip, 
@@ -39,8 +40,10 @@ class DeviceSystem:
                                 False
                                 ]
 
-                    if self.phone_info_df[self.phone_info_df['ID'] == device.phone_id]['IP'].values[0] != device.phone_ip:
+                    filtered_df = self.phone_info_df[self.phone_info_df['ID'] == device.phone_id]
+                    if not filtered_df.empty and filtered_df['IP'].values[0] != device.phone_ip:
                         update_ip(self.phone_info_df, device.phone_id, device.phone_ip)
+
                     
                     df.loc[len(df)] = temp_row
 
