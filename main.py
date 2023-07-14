@@ -6,7 +6,7 @@ from datetime import date, datetime
 import time
 import os
 from Heartbeat import Heartbeat
-from ui_setup import get_layout
+from UILayout import UILayout
 
 device_system = DeviceSystem()
 prev_device_info = device_system.current_device_info.copy()  # To keep track of previous state
@@ -14,31 +14,39 @@ prev_device_info = device_system.current_device_info.copy()  # To keep track of 
 today = date.today()
 file_path = f'data/{today}.csv'
 
+
 if(os.path.exists(file_path)):
     humain_time = time.strftime("%H:%M:%S", time.localtime())
-    temp_data = [time.time_ns(), str(humain_time), "-APP-START-"]
+    temp_data = [time.time_ns(), str(humain_time), "-APP-START-",'none']
     df = pd.read_csv(file_path, index_col=False)
     df.loc[len(df.index)] = temp_data
 else:
     humain_time = time.strftime("%H:%M:%S", time.localtime())
-    temp_data = [[time.time_ns(), str(humain_time), "-APP-START-"]]
-    df = pd.DataFrame(temp_data, columns=['time', 'human time', 'message'])
+    temp_data = [[time.time_ns(), str(humain_time), "-APP-START-",'none']]
+    df = pd.DataFrame(temp_data, columns=['time', 'human time', 'message', 'activity'])
     df.to_csv(file_path, index=False)
 
 
-def log_data(message, u_time):
+def log_data(message, activity, u_time):
     u_time_sec = u_time / 1e9  # convert nanoseconds to seconds
     dt_object = datetime.fromtimestamp(u_time_sec)  # Create datetime object from timestamp
     human_readable_time = dt_object.strftime("%H:%M:%S:%f")[:12]  # Gets time in HH:MM:SS:ffffff format and slices to HH:MM:SS:ff
 
-    temp_data = [u_time,  human_readable_time, message]
+    temp_data = [u_time,  human_readable_time, message, activity]
     df.loc[len(df.index)] = temp_data
-    window['-LOGBOX-'].print(temp_data)
+    # window['-LOGBOX-'].print(temp_data)
 
-layout = get_layout()
+layout = UILayout()
 window = sg.Window("PUPIL V1", layout, keep_on_top=False, location = (705, 125))
-heartbeat = Heartbeat(log_data, device_system)
 
+# heartbeat = Heartbeat(log_data, device_system)
+
+array_of_values = ["the_dance", "ukulele", "eating_drinking",
+                    "spotify", "hoovering", "doing_nothing",
+                    "grief_exercise", "plant_care", "poem", "ritual_dance"]
+ 
+index = 0 
+current_activity = 'none'
 # Event loop
 while True:
     event, values = window.read(timeout=100) 
@@ -55,7 +63,7 @@ while True:
         df.to_csv(file_path, index=False)
         u_time = time.time_ns()
         device_system.end_device_recording(u_time)
-        heartbeat.stop()
+        # heartbeat.stop()
 
     # UPDATE TABLE ON NEW DATA
     for device_id, device_info in device_system.current_device_info.items():
@@ -68,8 +76,8 @@ while True:
         message = '-START_REC-'
         u_time = time.time_ns()
         device_system.start_device_recording(u_time)
-        log_data(message, u_time)
-        heartbeat.start()
+        log_data(message,current_activity, u_time)
+        # heartbeat.start()
 
     # UPDATE TABLE DATA
     if event == '-DATAFRAME_UPDATED-': # called in DeviceSystem.py
@@ -81,32 +89,41 @@ while True:
     if event == '-STOP-REC-':
         message = '-STOP_REC-'
         u_time = time.time_ns()
-        log_data(message, u_time)
+        log_data(message,current_activity, u_time)
         device_system.end_device_recording(u_time)
-        heartbeat.stop()
+        # heartbeat.stop()
 
-     # SEND CUSTOM MESSAGE 
+    # SEND CUSTOM MESSAGE 
     if event == "-SEND-" :
         message = "-MESSAGE-" + values["-MESSAGE-"]
         u_time = time.time_ns()
         device_system.send_device_messages(u_time, message)
-        log_data(message, u_time)
+        log_data(message,current_activity, u_time)
         window["-MESSAGE-"].update("")
 
     # SEND TRIGGER
     if event == "-TRIGGER-":
-        clicked_time = time.time_ns()
+        u_time = time.time_ns()
         message = "-TRIGGER-"
-        device_system.send_device_messages(clicked_time, message)
-        log_data(message, u_time=clicked_time)
+        device_system.send_device_messages(u_time, message)
+        log_data(message,current_activity,u_time)
 
     # DROP DOWN MENU OPTION
-    if event == "-COMBO-":
-        selected_option = values["-COMBO-"]
-        print(f"Selected option: {selected_option}")
-        # You can send a message here, e.g.:
+    if event == "-CHANGING-":
         u_time = time.time_ns()
-        device_system.send_device_messages(u_time, selected_option)
+        message = "-CHANGING-"
+        device_system.send_device_messages(u_time, message)
+        log_data(message,current_activity,u_time)
+
+    if event == "-CHANGING-BTN-":
+        if array_of_values:  # Check that the array is not empty
+            u_time = time.time_ns()
+            current_activity = array_of_values[index]
+            # heartbeat.activity = current_activity
+            index = (index + 1) % len(array_of_values)  # Cycle through the array of values
+            device_system.send_device_messages(u_time, current_activity)
+            window["-CHANGING-BTN-"].update(array_of_values[index])
+            log_data(message,current_activity,u_time)
 
     # HEARTBEAT UPDATE
     # if(time.time() - heartbeat_update > 10):

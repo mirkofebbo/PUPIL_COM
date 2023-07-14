@@ -1,7 +1,7 @@
 # ui_setup.py
 import PySimpleGUI as sg
 
-def get_layout():
+def UILayout():
     options = ["Option 1", "Option 2", "Option 3"]
 
     sg.LOOK_AND_FEEL_TABLE['MyCreatedTheme'] = {'BACKGROUND': '#0D0208',
@@ -38,11 +38,12 @@ def get_layout():
             [sg.Button("Trigger", key="-TRIGGER-"),
             sg.Button('Start Recording', key="-START-REC-"), 
             sg.Button('Stop Recording', key="-STOP-REC-"),
-            sg.Button('Kill all', key="-KILLING-"),
+            sg.Button('KILL', key="-KILLING-"),
             ],
             [sg.Button("SEND", key="-SEND-", bind_return_key=True), 
             sg.Input("", key="-MESSAGE-"),
-            sg.Combo(options, key="-COMBO-", enable_events=True, default_value=options[0])  # Add this line
+            sg.Button("CHANGING", key="-CHANGING-"),
+            sg.Button('Changing Button', key="-CHANGING-BTN-"),  
             ],
             device_elements_layout,
             [sg.Multiline(size=(66,10), key='-LOGBOX-')]

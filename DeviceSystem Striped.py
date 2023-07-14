@@ -19,7 +19,7 @@ class DeviceSystem:
     # If the device is already discovered, update the info
     def update_device_ips(self):
         while not self.device_discovery_event.is_set():
-            list_of_devices = discover_devices(search_duration_seconds=10.0)
+            list_of_devices = discover_devices(search_duration_seconds=15.0)
             current_device_info = {}
 
             for device in list_of_devices:
@@ -35,8 +35,9 @@ class DeviceSystem:
             self.current_device_info = current_device_info
             self.devices = list_of_devices
             print("NEW LIST OF DEVICES")
+            # print(list_of_devices)
             self.start_devices_thread()
-            self.device_discovery_event.wait(10)
+            self.device_discovery_event.wait(15)
         
     # ======= FUNCTIONS===================================================
     # Iterate over the devices if one is not specify to perform an action 
@@ -54,23 +55,20 @@ class DeviceSystem:
         for device_thread in self.device_threads:
             if device_id is None or device_thread.device.phone_id == device_id:
                 device_thread.start_recording()
-                device_thread.queue_message("RECORDING START", u_time)
                 print("RECORDING STARTED")
                 
     # END RECORDING / THREAD KILLER 
     def end_device_recording(self, u_time, device_id=None):
         # Send stop command to all devices and threads
-        for device_thread in self.device_threads:
-            device_thread.stop_recording_without_joining()
 
-        # Now wait for all threads to join
         for device_thread in self.device_threads:
-            device_thread.join_thread()
+            device_thread.stop_recording()
+
 
     # SEND MESSAGES 
     def send_device_messages(self, u_time, message, device_id=None):
         for device_thread in self.device_threads:
             if device_id is None or device_thread.device.phone_id == device_id:
-                device_thread.queue_message(message, u_time)
+                device_thread.send_message(message, u_time)
         print("MESSAGE SENT TO ALL DEVICES ")
 

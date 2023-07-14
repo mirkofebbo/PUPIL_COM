@@ -61,4 +61,4 @@ class DeviceThread:
             # print(event)
 
         except:
-            print(self.ID,'not found')
+            print(self.ID,'ot found')

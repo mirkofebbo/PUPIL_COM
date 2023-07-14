@@ -11,6 +11,7 @@ class Heartbeat:
 
         self.thread = None
         self.stop_event = threading.Event()
+        self.activity = 'none'
 
     def start(self):
         if self.thread is None or not self.thread.is_alive():
@@ -35,7 +36,7 @@ class Heartbeat:
                 if time_left <= 0:
                     u_time = time.time_ns()
                     message = "-H-"
-                    self.log_data(message, u_time)
+                    self.log_data(message, self.activity, u_time)
                     self.device_system.send_device_messages(u_time, message) 
                     self.last_update_time = current_time
                     time_left = self.interval  # Reset the time left to the full interval
