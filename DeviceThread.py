@@ -12,6 +12,7 @@ class DeviceThread:
         self.message_queue = queue.Queue()  # Create a queue for messages
         self.thread = None
         self.start_time = None  # Add a start_time attribute
+        self.ID = device.phone_name
 
     def start_recording(self):
         if not self.recording_event.is_set():
@@ -35,9 +36,9 @@ class DeviceThread:
         if self.thread is not None:
             self.thread.join()
             if self.thread.is_alive():
-                print("DEVICE NOT DEAD")
+                print(self.ID,"DEVICE NOT DEAD")
             else:
-                print("DEVICE DEAD")
+                print(self.ID, "DEVICE DEAD")
 
     def _process_messages(self):
         # Process messages in the queue while recording
@@ -60,4 +61,4 @@ class DeviceThread:
             # print(event)
 
         except:
-            print(f'Device not found')
+            print(self.ID,'Not found')

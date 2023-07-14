@@ -6,6 +6,7 @@ from datetime import date, datetime
 import time
 import os
 from Heartbeat import Heartbeat
+from ui_setup import get_layout
 
 device_system = DeviceSystem()
 prev_device_info = device_system.current_device_info.copy()  # To keep track of previous state
@@ -34,42 +35,7 @@ def log_data(message, u_time):
     df.loc[len(df.index)] = temp_data
     window['-LOGBOX-'].print(temp_data)
 
-# ======= USER INTERFACE ======================
-sg.LOOK_AND_FEEL_TABLE['MyCreatedTheme'] = {'BACKGROUND': '#0D0208',
-                                        'TEXT': '#00FF41',
-                                        'INPUT': '#202729',
-                                        'TEXT_INPUT': '#008F11',
-                                        'SCROLL': '#008F11',
-                                        'BUTTON': ('#0D0208', '#00FF41'),
-                                        'PROGRESS': ('#D1826B', '#CC8019'),
-                                        'BORDER': 0, 
-                                        'SLIDER_DEPTH': 0, 
-                                        'PROGRESS_DEPTH': 0,
-                                        }
-
-sg.theme('MyCreatedTheme')
-# Define the window's contents
-layout = [
-    [sg.Text("Device Manager")],
-    [
-        sg.Button("Trigger",           key="-TRIGGER-"),
-        sg.Button('Start Recording',   key="-START-REC-"), 
-        sg.Button('Stop Recording',    key="-STOP-REC-"),
-        sg.Button('Kill all',          key="-KILLING-"),
-     ],
-    [
-        sg.Button("SEND",           key="-SEND-", bind_return_key=True), 
-        sg.Input("",                key="-MESSAGE-")],
-    [sg.Table(values                =   device_system.current_device_info.values.tolist(), 
-              headings              =   list(device_system.current_device_info.columns), 
-              display_row_numbers   =   False, 
-              auto_size_columns     =   False, 
-              num_rows              =   12,# NUM OF ITEMS TO HAVE ON THE LIST 
-              key                   =   '-TABLE-')]
-]
-
-layout.append([sg.Multiline(size=(66,10), key='-LOGBOX-')])
-# Create the window
+layout = get_layout()
 window = sg.Window("PUPIL V1", layout, keep_on_top=False, location = (705, 125))
 heartbeat = Heartbeat(log_data, device_system)
 
@@ -80,19 +46,22 @@ while True:
     # End program if user closes window
     if event == sg.WINDOW_CLOSED:
         df.to_csv(file_path, index=False)
-        device_system.stop_device_threads()
+        u_time = time.time_ns()
+        device_system.end_device_recording(u_time)
         break
 
     # KILL all thread
     if event == '-KILLING-':
         df.to_csv(file_path, index=False)
-        device_system.stop_device_threads()
+        u_time = time.time_ns()
+        device_system.end_device_recording(u_time)
         heartbeat.stop()
 
     # UPDATE TABLE ON NEW DATA
-    if not device_system.current_device_info.equals(prev_device_info):
-        window['-TABLE-'].update(values=[list(row) for row in device_system.current_device_info.values])
-        prev_device_info = device_system.current_device_info.copy()
+    for device_id, device_info in device_system.current_device_info.items():
+        if f'-POWER-{device_id}-' in window.AllKeysDict and f'-SPACE-{device_id}-' in window.AllKeysDict:
+            window[f'-POWER-{device_id}-'].update(device_info['BATTERY'])  # Update battery level
+            window[f'-SPACE-{device_id}-'].update(device_info['STORAGE'])  # Update storage usage
         
     # START THE RECORDING 
     if event == '-START-REC-':
@@ -130,7 +99,15 @@ while True:
         message = "-TRIGGER-"
         device_system.send_device_messages(clicked_time, message)
         log_data(message, u_time=clicked_time)
-        
+
+    # DROP DOWN MENU OPTION
+    if event == "-COMBO-":
+        selected_option = values["-COMBO-"]
+        print(f"Selected option: {selected_option}")
+        # You can send a message here, e.g.:
+        u_time = time.time_ns()
+        device_system.send_device_messages(u_time, selected_option)
+
     # HEARTBEAT UPDATE
     # if(time.time() - heartbeat_update > 10):
     #     message = "H"
