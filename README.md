@@ -1,71 +1,80 @@
-# PUPIL_COM
-Mirko Febbo 
-Neurolive project 
-06/07/2023
+# Pupil Labs Device Manager
 
-# NOTES:
-    Avoid busy waiting: In the _record method of DeviceThread, you use time.sleep(1) in a while loop. This is an example of busy waiting, which consumes a lot of CPU resources. Instead of doing this, consider using a signaling mechanism such as Event objects in the threading module.
+This project provides an interface to discover and control Pupil Labs devices using their Realtime API. It is built with Python's Tkinter for the user interface, and asyncio for managing the asynchronous communication with the devices.
 
-    Reduce I/O operations: In the update_device_ips method, you read from and write to a CSV file in a loop. Disk I/O operations are slow and could be a performance bottleneck. Consider reading the file once at the start, updating the DataFrame in memory, and then writing back to the file once all updates are done.
+## Features
 
-    Use asynchronous programming: If the devices you're communicating with support it, you might benefit from asynchronous I/O operations. This could free up resources while waiting for responses.
+- Discover Pupil Labs devices on the network
+- Start/Stop recording on each individual device
+- Start/Stop recording on all devices simultaneously
+- Send a message to all devices
 
-    Batch processing: If possible, group operations together rather than performing them individually. For example, sending a batch of messages at once, instead of one-by-one.
+## Getting Started
 
-# TO DO START
-TEST:
-    Loads of devices 
-    IS THE THREAD DEAD? Update: Maybe ?
+These instructions will get you a copy of the project up and running on your local machine.
 
-BUG:
-    Python terminal sometimes never stop, meaning that some threads are still not closing?
-        tryed: os.exit() + sys.exit() and exit() none worked
-        
-TOP:
-    Double check time echo protocol 
-    Handle device drop
+### Prerequisites
 
-MEDIUM:
-    Add static message button for each events 
-    Check if the device is recording 
-    Check if the glasses are connected 
+- Python 3.10+
+- Pupil Labs Realtime API package (pip install pupil_labs)
 
-LOW:
-    Make the code potato proof
-    Build a Proper app 
-    Add recording timer for each device
-    
-# LIBRARY
-PYTHON THREADING LIBRARY:
-    https://docs.python.org/3/library/threading.html
+## Usage
+
+- Start the application and click on "Discover Devices" button to discover the Pupil Labs devices in the network.
+- The discovered devices are displayed with their name, IP, battery level, and glasses serial number.
+- Use "Start Recording" button next to each device to start/stop recording on that specific device.
+- Use "Start Recording All" button to start/stop recording on all devices simultaneously.
+- Use "Send Message" button to send a predefined message to all devices.
+
+## Contributing
+
+Please read CONTRIBUTING.md for details on our code of conduct, and the process for submitting pull requests to us.
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE.md file for details.
+
+## Acknowledgments
+
+- Thanks to Pupil Labs for providing the Realtime API
 
 
-PUPIL LAB API DOCUMENTATION:
-    https://pupil-labs-realtime-api.readthedocs.io/en/stable/api/index.html
+# Explaining the App Class
 
-# FILES
+The `App` class is the main class that drives the functionality of the GUI application. The `App` class makes use of several other components such as `Tkinter` for the GUI, `asyncio` for asynchronous operations, and the `DeviceHandler` class for handling device-related functionalities.
 
-Main:
-    UI
-    Current testing ground
+Below is an explanation of each part of the `App` class:
 
-DeviceSearch: 
-    Thread that does a sweep to find nerby devices
-    Retrun a list of device and a df with basic status update on the device.
-    Now included in DeviceSystem 
+## 1. `__init__(self, root, loop)`: 
 
-DeviceSystem:
-    A object responsible for all the devices comunication and connection
-    Have a constant search for new device every 30 sec 
+This is the constructor for the `App` class. It initializes the main Tkinter root widget, an asyncio event loop, a list to hold `DeviceHandler` instances, and a frame within the main root widget to hold the device information. It also creates and packs a 'Discover Devices' button into the Tkinter root widget.
 
-DeviceThread:
-    Start a Thread on the start of the recording.
-    Using this thread the user can:
-        kill threads
-        Start/Stop recording 
-        send custom message using time echo protocol:
-        https://pupil-labs-realtime-api.readthedocs.io/en/stable/api/async.html#module-pupil_labs.realtime_api.time_echo
+## 2. `toggle_recording(self, handler, button)`: 
 
-Heartbeat:
-    Thread that call to send a message every 10sec 
-    
+This function controls the recording state of a device. It takes in two arguments: a `DeviceHandler` instance and a Tkinter button. Depending on the current recording state of the device, it will either start or stop the recording and update the text on the button accordingly.
+
+## 3. `send_message(self, handler, message, u_time)`: 
+
+This function is responsible for sending a message to a device. It uses `asyncio` to run the `send_message` coroutine in the `DeviceHandler` class in a threadsafe manner.
+
+## 4. `discover_devices_threadsafe(self)`: 
+
+This function is used to start the discovery of devices in a threadsafe way.
+
+## 5. `async discover_devices(self)`: 
+
+This coroutine uses the Pupil Labs API to discover devices. It will continue to find devices until it times out. It also checks if a device is already in the handlers list before adding it, thereby preventing duplicate devices. Each discovered device is initialized and its recording state is set to `False`.
+
+## 6. `async get_device_info(self)`: 
+
+This coroutine returns a list of device information for each `DeviceHandler` in the handlers list.
+
+## 7. `display_devices(self, devices_info)`: 
+
+This function displays the information of all discovered devices. It first clears the device frame of any previously displayed information. For each device, it creates a label with the device information, a button to start/stop recording, and a button to send a message. It uses closures to bind each button to its specific handler and to maintain the current state of the recording button.
+
+## 8. `if __name__ == "__main__"`: 
+
+This is the entry point of the application when it's run as a script. It creates the main Tkinter root widget and asyncio event loop, then instantiates the `App` class. It also creates and starts a new thread to run the asyncio event loop so that it can run in parallel with the Tkinter mainloop. 
+
+This entire application functions as a simple graphical user interface to interact with Pupil Labs devices. It provides functionalities to discover devices, display device information, start and stop recording on a device, and send a message to a device.
