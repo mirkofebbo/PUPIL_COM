@@ -1,3 +1,11 @@
+# TODO 
+HIGHT:
+- Add dropdown menu to log in the current stage
+- Add if changing button 
+- Find a way to link both so that in the data it show changing continuosly
+
+MEDIUM:
+- Add ask for update once in a while to see if we still have the phones 
 # Pupil Labs Device Manager
 
 This project provides an interface to discover and control Pupil Labs devices using their Realtime API. It is built with Python's Tkinter for the user interface, and asyncio for managing the asynchronous communication with the devices.
