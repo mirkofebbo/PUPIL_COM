@@ -5,7 +5,13 @@ HIGHT:
 - Find a way to link both so that in the data it show changing continuosly
 
 MEDIUM:
-- Add ask for update once in a while to see if we still have the phones 
+- Add update once in a while to see if we still have the phones 
+- - Then if we loos one lunch 2-3 search see if we can find it again 
+- Check if device is recrording using DeviceHandler print_recording [update the function print_recording]
+
+LOW: 
+- Work on the UI layout 
+- 
 # Pupil Labs Device Manager
 
 This project provides an interface to discover and control Pupil Labs devices using their Realtime API. It is built with Python's Tkinter for the user interface, and asyncio for managing the asynchronous communication with the devices.
