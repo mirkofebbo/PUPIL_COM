@@ -1,5 +1,5 @@
 # TODO 
-HIGHT:
+HIGH:
 - Add dropdown menu to log in the current stage
 - Add if changing button 
 - Find a way to link both so that in the data it show changing continuosly

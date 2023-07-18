@@ -14,23 +14,33 @@ class App:
         self.handlers = []
         self.loop = loop
         self.device_frame = tk.Frame(self.root)
-        self.device_frame.pack()
+        self.device_frame.pack(fill=tk.X) # This line has changed
+        
         # Initialize the CSV writer
         self.init_csv_writer()
+
         self.is_any_recording = False  # State variable to track if any recording is in progress
+
+        # Create a frame for navbar
+        self.navbar_frame = tk.Frame(self.root)
+        self.navbar_frame.pack(fill=tk.X)  # Fill the X direction
+        
         # Discover button
-        self.discover_button = tk.Button(self.root, text="Discover Devices", 
+        self.discover_button = tk.Button(self.navbar_frame, text="Discover Devices", 
                                          command=self.discover_devices_threadsafe)
-        self.discover_button.pack()
+        self.discover_button.pack(side=tk.LEFT) # This line has changed
+        
         # Start all button
-        self.start_all_button = tk.Button(self.root, text="Start Recording All", 
+        self.start_all_button = tk.Button(self.navbar_frame, text="Start Recording All", 
                                           command=self.toggle_recording_all)
-        self.start_all_button.pack()
+        self.start_all_button.pack(side=tk.LEFT) # This line has changed
+        
         # Send message button
         message = "Placeholder"
-        self.send_button = tk.Button(self.root, text="Send Message",
+        self.send_button = tk.Button(self.navbar_frame, text="Send Message",
                                      command=lambda: self.send_message_all(message, time.time_ns()))
-        self.send_button.pack()
+        self.send_button.pack(side=tk.LEFT) # This line has changed
+
         # Heartbeat
         self.heartbeat()
         # Keep track of all tasks
