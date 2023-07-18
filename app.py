@@ -7,6 +7,10 @@ import time
 import csv
 from datetime import datetime
 import os
+
+
+stages = ["NONE","THE_DANCE","UKULELE", "EATING_DRINKING", "SPOTIFY", "HOOVERING", "DOING_NOTHING", "GRIEF_EXERCISE", "PLANT_CARE", "POEM", "RITUAL_DANCE"]
+transitions = [ "PUT_ON_COSTUME", "CHANGE_COSTUME", "REMOVE_COSTUME"]
 class App:
 
     def __init__(self, root, loop):
@@ -14,8 +18,8 @@ class App:
         self.handlers = []
         self.loop = loop
         self.device_frame = tk.Frame(self.root)
-        self.device_frame.pack(fill=tk.X) # This line has changed
-        
+        self.device_frame.pack(fill=tk.X)  # This line has changed
+
         # Initialize the CSV writer
         self.init_csv_writer()
 
@@ -24,27 +28,51 @@ class App:
         # Create a frame for navbar
         self.navbar_frame = tk.Frame(self.root)
         self.navbar_frame.pack(fill=tk.X)  # Fill the X direction
-        
+
         # Discover button
         self.discover_button = tk.Button(self.navbar_frame, text="Discover Devices", 
                                          command=self.discover_devices_threadsafe)
-        self.discover_button.pack(side=tk.LEFT) # This line has changed
-        
+        self.discover_button.pack(side=tk.LEFT)  # This line has changed
+
         # Start all button
         self.start_all_button = tk.Button(self.navbar_frame, text="Start Recording All", 
                                           command=self.toggle_recording_all)
-        self.start_all_button.pack(side=tk.LEFT) # This line has changed
-        
+        self.start_all_button.pack(side=tk.LEFT)  # This line has changed
+
         # Send message button
         message = "Placeholder"
         self.send_button = tk.Button(self.navbar_frame, text="Send Message",
                                      command=lambda: self.send_message_all(message, time.time_ns()))
-        self.send_button.pack(side=tk.LEFT) # This line has changed
+        self.send_button.pack(side=tk.LEFT)  # This line has changed
+
+        # Stage button
+        self.stages_iter = iter(stages)  # Create iterator from stages list
+        self.current_stage = next(self.stages_iter)  # Initialize to first stage
+        self.stage_button = tk.Button(self.navbar_frame, text=self.current_stage, command=self.cycle_stage)
+        self.stage_button.pack(side=tk.LEFT)
+
+        # Transition drop-down menu
+        self.transition_var = tk.StringVar(self.navbar_frame)
+        self.transition_var.set(transitions[0])  # set the initial value
+        # self.transition_menu = tk.OptionMenu(self.navbar_frame, self.transition_var, *transitions)
+        # self.transition_menu.pack(side=tk.LEFT)
+        self.transition_buttons = {}
+        self.transition_frame = tk.Frame(self.root)  # New frame for transition buttons
+        self.transition_frame.pack(fill=tk.X)  # Fill the X direction
+
+        tk.Label(self.transition_frame, text="CHANGING").pack(side=tk.LEFT)  # Text on the left
+
+        self.create_transition_buttons()
+        
+        self.previous_stage = "NONE"
+        self.previous_transition = self.transition_var.get()
 
         # Heartbeat
         self.heartbeat()
+
         # Keep track of all tasks
         self.tasks = []
+    
 
     # ==== DATA LOGGING ====
     def init_csv_writer(self):
@@ -77,17 +105,36 @@ class App:
             self.csv_file.close()
             self.csv_file_is_open = False
 
-    # ==== SENDING MESSAGE ====
+    def cycle_stage(self):
+        try:
+            self.current_stage = next(self.stages_iter)  # Get next stage
+        except StopIteration:
+            self.stages_iter = iter(stages)  # Reset iterator
+            self.current_stage = next(self.stages_iter)  # Get first stage
+        self.stage_button.config(text=self.current_stage)  # Update button text
+
+    #==== SENDING MESSAGE ====
     def send_message_all(self, message, u_time):
+        current_transition = self.transition_var.get()
+
+        if self.current_stage != self.previous_stage:
+            formatted_message = f"{message} - Action: {self.current_stage}"
+            self.previous_stage = self.current_stage
+            stage = self.current_stage
+        elif current_transition != self.previous_transition:
+            formatted_message = f"{message} - Action: {current_transition}"
+            self.previous_transition = current_transition
+            stage = current_transition
+        else:
+            # Default message if neither stage nor transition has changed
+            formatted_message = f"{message} - Action: {self.previous_stage if self.previous_stage != 'NONE' else self.previous_transition}"
+            stage = self.previous_stage if self.previous_stage != 'NONE' else self.previous_transition
+
         for handler in self.handlers:
-            task = asyncio.run_coroutine_threadsafe(handler.send_message(message, u_time), self.loop)            
-            self.write_to_csv(u_time, message, "STAGE TEST")
+            task = asyncio.run_coroutine_threadsafe(handler.send_message(formatted_message, u_time), self.loop)
             self.tasks.append(task)
 
-    def send_message(self, handler, message, u_time):
-        task = asyncio.run_coroutine_threadsafe(handler.send_message(message, u_time), self.loop)
-        # Store the task
-        self.tasks.append(task)
+        self.write_to_csv(u_time, message, stage) 
 
     def heartbeat(self):
         u_time = time.time_ns()
@@ -97,7 +144,7 @@ class App:
         self.heartbeat_id = self.root.after(10000, self.heartbeat)        # Note that because it is using the Tkinter event loop to schedule the heartbeat function, 
         # the function itself doesn't need to be threadsafe. 
         # The after method is the standard way to schedule recurring events in Tkinter.
-        self.write_to_csv(u_time, "H", "STAGE TEST")
+        # self.write_to_csv(u_time, "H", "STAGE TEST")
 
     # ==== RECORDING ====
     def toggle_recording_all(self):
@@ -162,26 +209,45 @@ class App:
         devices_info = await self.get_device_info()  # Get the updated info
         self.root.after(0, self.display_devices, devices_info)  # Schedule on the Tkinter event loop
 
+    def create_transition_buttons(self):
+        for transition in transitions:
+            self.transition_buttons[transition] = tk.Button(self.transition_frame, text=transition,
+                                                            command=lambda transition=transition: self.toggle_transition(transition))
+            self.transition_buttons[transition].pack(side=tk.LEFT)
+
+    def toggle_transition(self, transition):
+        # Turn off all transitions
+        for button in self.transition_buttons.values():
+            button.config(relief=tk.RAISED)
+
+        # Turn on selected transition
+        self.transition_buttons[transition].config(relief=tk.SUNKEN)
+        self.transition_var.set(transition)
+
+        # Send message
+        message = "T"
+        u_time = time.time_ns()
+        self.send_message_all(message, u_time)
     # ==== DISPLAY ====
     async def get_device_info(self):
-        return [await handler.get_info() for handler in self.handlers]
+        return [await handler.get_info() for handler in sorted(self.handlers, key=lambda handler: handler.dev_info.name)]
 
     def display_devices(self, devices_info):
         # Clear previous device labels
         for widget in self.device_frame.winfo_children():
             widget.destroy()
 
+        # Sort the device handlers by device name before displaying
+        self.handlers.sort(key=lambda handler: handler.dev_info.name)
+
         # Display current list of devices
         for i, device_info in enumerate(devices_info):
-            device_label = tk.Label(self.device_frame, text=device_info)
-            device_label.pack()
 
             # Creating a new function here creates a closure that keeps the values of `handler` and `record_button` 
             def make_button(handler):
                 record_button = tk.Button(self.device_frame, text="Start Recording",
-                                  command=lambda: self.toggle_recording(self.handlers[i], record_button))
-                
-                record_button.pack()
+                                command=lambda: self.toggle_recording(self.handlers[i], record_button))
+                record_button.grid(row=i, column=0)  # put the button on the left
 
                 self.handlers[i].record_button = record_button
 
@@ -189,10 +255,14 @@ class App:
 
             make_button(self.handlers[i])
 
-    
+            device_label = tk.Label(self.device_frame, text=device_info)
+            device_label.grid(row=i, column=1)  # put the text on the right
+
+            
     def close(self):
         # Cancel the heartbeat function
         self.root.after_cancel(self.heartbeat_id)
+
         # Cancel all tasks
         for task in self.tasks:
             task.cancel()
