@@ -1,5 +1,6 @@
 import asyncio
 import tkinter as tk
+from tkinter import ttk
 from pupil_labs.realtime_api import Device, Network
 from DeviceHandler import DeviceHandler
 import time
@@ -21,7 +22,7 @@ class App:
         self.handlers = []
         self.loop = loop
         self.device_frame = tk.Frame(self.root)
-        self.device_frame.pack(fill=tk.X)  
+        self.device_frame.pack(fill=tk.X)
         self.is_any_recording = False 
 
         self.init_csv_writer()
@@ -41,24 +42,40 @@ class App:
         self.activity_frame = tk.Frame(self.root) 
         self.activity_frame.pack(fill=tk.X)  
 
-        tk.Label(self.activity_frame, text="Current activity: ").pack(side=tk.LEFT) 
+        self.current_activity = None
+        self.current_pnp = None
 
-        # Fetch the current activity and P/NP status
-        current_date = datetime.now(pytz.timezone('GMT')).strftime('%d/%m/%Y')
-        current_time = datetime.now(pytz.timezone('CET')).hour
-        print("current_time", current_time)
+        tk.Label(self.activity_frame, text="Current activity: ").pack(side=tk.LEFT)
 
-        current_time = "15:00" if current_time < 5 else ("17:00" if current_time < 7 else "19:00")
-        print("current_date", current_date)
-        self.activities = data[current_date][current_time]["activity"]
-        self.p_np = data[current_date][current_time]["P/NP"]
-        self.activity_iter = iter(self.activities)
-        self.current_activity = "NONE"
-        self.current_pnp = "NONE"
-        self.activity_button = tk.Button(self.activity_frame, text=self.current_activity, command=self.cycle_activity)
+        # Dropdown for selecting date
+        self.dates = sorted(list(self.data.keys()))
+        self.date_var = tk.StringVar()
+        self.date_dropdown = ttk.Combobox(self.activity_frame, textvariable=self.date_var)
+        self.date_dropdown['values'] = self.dates
+        self.date_dropdown.current(0)  # set selection to first date
+        self.date_dropdown.pack(side=tk.LEFT)
+
+        # Update activities when a new date is selected
+        self.date_var.trace('w', lambda *args: self.update_activities())
+
+        self.times = sorted(list(next(iter(self.data.values())).keys()))
+        self.time_var = tk.StringVar()
+        self.time_dropdown = ttk.Combobox(self.activity_frame, textvariable=self.time_var)
+        self.time_dropdown['values'] = self.times
+        self.time_dropdown.current(0)  # set selection to first time
+        self.time_dropdown.pack(side=tk.LEFT)
+
+        # Update activities when a new time is selected
+        self.time_var.trace('w', lambda *args: self.update_activities())
+
+
+        # Update button for activities
+        self.activity_button = tk.Button(self.activity_frame, text="Update Activity", command=self.cycle_activity)
         self.activity_button.pack(side=tk.LEFT)
+        self.update_activities()  # Set the initial activity
+
         self.previous_activity = "NONE"
-        print(self.activities)
+        
         self.custom_frame = tk.Frame(self.root)  
         self.custom_frame.pack(fill=tk.X) 
 
@@ -82,6 +99,19 @@ class App:
                                     command=lambda: self.send_message_all("PERFORMER_TALK", time.time_ns()))
         self.talk_button.pack(side=tk.LEFT)
 
+
+        # Create a new frame for transition buttons
+        self.transitions_frame = tk.Frame(self.root)
+        self.transitions_frame.pack(fill=tk.X, padx=5, pady=5)
+
+        # Add a label to the frame
+        label = tk.Label(self.transitions_frame, text="Changes: ")
+        label.pack(side=tk.LEFT)
+        # Create a button for each transition
+        for transition in transitions:
+            button = tk.Button(self.transitions_frame, text=transition, 
+                            command=lambda transition=transition: self.send_message_all(transition, time.time_ns()))
+            button.pack(side=tk.LEFT)
         self.heartbeat()
 
         self.tasks = []
@@ -118,38 +148,31 @@ class App:
             self.csv_file.close()
             self.csv_file_is_open = False
 
+    def update_activities(self):
+        # Fetch the activities and P/NP status for the selected date and time
+        selected_date = self.date_var.get()
+        selected_time = self.time_var.get()
+        self.activities = self.data[selected_date][selected_time]["activity"]
+        self.pnp = self.data[selected_date][selected_time]["P/NP"]
+
+        # Create iterators
+        self.activities_iter = iter(self.data[selected_date][selected_time]["activity"])
+        self.pnp_iter = iter(self.data[selected_date][selected_time]["P/NP"])
+
+        # Update current activity and P/NP status
+        self.cycle_activity()
+
     def cycle_activity(self):
-        current_date = datetime.now().strftime("%d/%m/%Y")
-        current_hour = datetime.now().hour
-
-        if current_date in self.data:
-            timeslots = sorted([time for time in self.data[current_date]])
-            for time in timeslots:
-                if int(time.split(":")[0]) > current_hour:
-                    self.activities = self.data[current_date][time]["activity"]
-                    self.pnps = self.data[current_date][time]["P/NP"]
-                    break
-            else:
-                self.activities = self.data[current_date][timeslots[-1]]["activity"]
-                self.pnps = self.data[current_date][timeslots[-1]]["P/NP"]
-
-        if not hasattr(self, 'activities_iter') or not hasattr(self, 'pnps_iter'):  # If iterators are not initialized
-            self.activities_iter = iter(self.activities)  # Create iterator from activities list
-            self.pnps_iter = iter(self.pnps)  # Create iterator from P/NP list
-
         try:
             self.current_activity = next(self.activities_iter)
+            self.current_p_np = next(self.pnp_iter)
         except StopIteration:  # If end of activities list is reached, start over
             self.activities_iter = iter(self.activities)
+            self.pnp_iter = iter(self.p_np)
             self.current_activity = next(self.activities_iter)
+            self.current_p_np = next(self.pnp_iter)
 
-        try:
-            self.current_pnp = next(self.pnps_iter)
-        except StopIteration:  # If end of P/NP list is reached, start over
-            self.pnps_iter = iter(self.pnps)
-            self.current_pnp = next(self.pnps_iter)
-
-        self.activity_button.config(text=f"{self.current_activity} ({self.current_pnp})")  # Update button text
+        self.activity_button.config(text=f"{self.current_activity} ({self.current_p_np})")  # Update button text
 
     #==== SENDING MESSAGE ====
     def send_message_all(self, message, u_time):

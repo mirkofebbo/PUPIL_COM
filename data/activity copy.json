@@ -1,0 +1,362 @@
+{
+    "1": {
+        "day": "19/07/2023",
+        "time": "15:00",
+        "activity": [
+            "UKULELE",
+            "THE_DANCE",
+            "RITUAL_DANCE",
+            "POEM",
+            "GRIEF_EXERCISE",
+            "PLANT_CARE",
+            "SPOTIFY",
+            "DOING_NOTHING",
+            "EATING_DRINKING",
+            "THE_DANCE",
+            "HOOVERING"
+        ],
+        "P/NP": [
+            "NP",
+            "P",
+            "P",
+            "NP",
+            "P",
+            "NP",
+            "NP",
+            "P",
+            "NP",
+            "NP",
+            "P"
+        ]
+    },
+    "2": {
+        "day": "19/07/2023",
+        "time": "17:00",
+        "activity": [
+            "PLANT_CARE",
+            "GRIEF_EXERCISE",
+            "RITUAL_DANCE",
+            "HOOVERING",
+            "THE_DANCE",
+            "EATING_DRINKING",
+            "THE_DANCE",
+            "POEM",
+            "UKULELE",
+            "SPOTIFY",
+            "DOING_NOTHING"
+        ],
+        "P/NP": [
+            "NP",
+            "NP",
+            "P",
+            "NP",
+            "NP",
+            "P",
+            "P",
+            "NP",
+            "P",
+            "P",
+            "NP"
+        ]
+    },
+    "3": {
+        "day": "19/07/2023",
+        "time": "19:00",
+        "activity": [
+            "THE_DANCE",
+            "UKULELE",
+            "DOING_NOTHING",
+            "PLANT_CARE",
+            "GRIEF_EXERCISE",
+            "POEM",
+            "THE_DANCE",
+            "HOOVERING",
+            "EATING_DRINKING",
+            "RITUAL_DANCE",
+            "SPOTIFY"
+        ],
+        "P/NP": [
+            "P",
+            "NP",
+            "P",
+            "P",
+            "NP",
+            "NP",
+            "NP",
+            "P",
+            "NP",
+            "P",
+            "NP"
+        ]
+    },
+    "4": {
+        "day": "20/07/2023",
+        "time": "15:00",
+        "activity": [
+            "PLANT_CARE",
+            "THE_DANCE",
+            "DOING_NOTHING",
+            "EATING_DRINKING",
+            "SPOTIFY",
+            "HOOVERING",
+            "GRIEF_EXERCISE",
+            "POEM",
+            "THE_DANCE",
+            "UKULELE",
+            "RITUAL_DANCE"
+        ],
+        "P/NP": [
+            "NP",
+            "NP",
+            "P",
+            "NP",
+            "P",
+            "P",
+            "NP",
+            "P",
+            "P",
+            "P",
+            "NP"
+        ]
+    },
+    "5": {
+        "day": "20/07/2023",
+        "time": "17:00",
+        "activity": [
+            "THE_DANCE",
+            "RITUAL_DANCE",
+            "DOING_NOTHING",
+            "EATING_DRINKING",
+            "HOOVERING",
+            "UKULELE",
+            "GRIEF_EXERCISE",
+            "SPOTIFY",
+            "PLANT_CARE",
+            "THE_DANCE",
+            "POEM"
+        ],
+        "P/NP": [
+            "NP",
+            "NP",
+            "P",
+            "P",
+            "P",
+            "NP",
+            "P",
+            "NP",
+            "NP",
+            "P",
+            "NP"
+        ]
+    },
+    "6": {
+        "day": "20/07/2023",
+        "time": "19:00",
+        "activity": [
+            "EATING_DRINKING",
+            "SPOTIFY",
+            "UKULELE",
+            "HOOVERING",
+            "DOING_NOTHING",
+            "GRIEF_EXERCISE",
+            "THE_DANCE",
+            "PLANT_CARE",
+            "POEM",
+            "RITUAL_DANCE",
+            "THE_DANCE"
+        ],
+        "P/NP": [
+            "NP",
+            "P",
+            "NP",
+            "P",
+            "P",
+            "NP",
+            "NP",
+            "P",
+            "NP",
+            "P",
+            "P"
+        ]
+    },
+    "7": {
+        "day": "24/07/2023",
+        "time": "15:00",
+        "activity": [
+            "RITUAL_DANCE",
+            "DOING_NOTHING",
+            "PLANT_CARE",
+            "UKULELE",
+            "THE_DANCE",
+            "SPOTIFY",
+            "GRIEF_EXERCISE",
+            "POEM",
+            "HOOVERING",
+            "EATING_DRINKING",
+            "THE_DANCE"
+        ],
+        "P/NP": [
+            "NP",
+            "P",
+            "P",
+            "P",
+            "NP",
+            "NP",
+            "P",
+            "NP",
+            "P",
+            "NP",
+            "P"
+        ]
+    },
+    "8": {
+        "day": "24/07/2023",
+        "time": "17:00",
+        "activity": [
+            "UKULELE",
+            "RITUAL_DANCE",
+            "HOOVERING",
+            "THE_DANCE",
+            "GRIEF_EXERCISE",
+            "EATING_DRINKING",
+            "PLANT_CARE",
+            "THE_DANCE",
+            "DOING_NOTHING",
+            "SPOTIFY",
+            "POEM"
+        ],
+        "P/NP": [
+            "NP",
+            "P",
+            "NP",
+            "NP",
+            "P",
+            "NP",
+            "NP",
+            "P",
+            "NP",
+            "P",
+            "P"
+        ]
+    },
+    "9": {
+        "day": "24/07/2023",
+        "time": "19:00",
+        "activity": [
+            "HOOVERING",
+            "THE_DANCE",
+            "POEM",
+            "RITUAL_DANCE",
+            "SPOTIFY",
+            "DOING_NOTHING",
+            "THE_DANCE",
+            "PLANT_CARE",
+            "EATING_DRINKING",
+            "GRIEF_EXERCISE",
+            "UKULELE"
+        ],
+        "P/NP": [
+            "P",
+            "NP",
+            "P",
+            "NP",
+            "NP",
+            "P",
+            "P",
+            "P",
+            "NP",
+            "P",
+            "P"
+        ]
+    },
+    "10": {
+        "day": "25/07/2023",
+        "time": "15:00",
+        "activity": [
+            "RITUAL_DANCE",
+            "PLANT_CARE",
+            "SPOTIFY",
+            "HOOVERING",
+            "THE_DANCE",
+            "GRIEF_EXERCISE",
+            "DOING_NOTHING",
+            "THE_DANCE",
+            "EATING_DRINKING",
+            "UKULELE",
+            "POEM"
+        ],
+        "P/NP": [
+            "NP",
+            "NP",
+            "P",
+            "P",
+            "NP",
+            "P",
+            "NP",
+            "P",
+            "NP",
+            "P",
+            "P"
+        ]
+    },
+    "11": {
+        "Day": "25/07/2023",
+        "time": "17:00",
+        "activity": [
+            "DOING_NOTHING",
+            "THE_DANCE",
+            "THE_DANCE",
+            "UKULELE",
+            "POEM",
+            "GRIEF_EXERCISE",
+            "HOOVERING",
+            "SPOTIFY",
+            "RITUAL_DANCE",
+            "PLANT_CARE",
+            "EATING_DRINKING"
+        ],
+        "P/NP": [
+            "NP",
+            "NP",
+            "P",
+            "P",
+            "NP",
+            "P",
+            "P",
+            "NP",
+            "NP",
+            "P",
+            "P"
+        ]
+    },
+    "12": {
+        "day": "25/07/2023",
+        "time": "19:00",
+        "activity": [
+            "SPOTIFY",
+            "GRIEF_EXERCISE",
+            "HOOVERING",
+            "EATING_DRINKING",
+            "UKULELE",
+            "RITUAL_DANCE",
+            "PLANT_CARE",
+            "DOING_NOTHING",
+            "THE_DANCE",
+            "POEM",
+            "THE_DANCE"
+        ],
+        "P/NP": [
+            "NP",
+            "P",
+            "NP",
+            "P",
+            "P",
+            "NP",
+            "P",
+            "P",
+            "NP",
+            "NP",
+            "P"
+        ]
+    }
+}
