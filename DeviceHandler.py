@@ -6,6 +6,8 @@ import time
 
 class DeviceHandler:
 
+    #AL: maybe add a little description of the class and its use
+
     def __init__(self, dev_info):
         self.dev_info = dev_info
         self.device = None

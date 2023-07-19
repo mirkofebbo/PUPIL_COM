@@ -70,7 +70,9 @@ class App:
 
 
         # Update button for activities
-        self.activity_button = tk.Button(self.activity_frame, text="Update Activity", command=self.cycle_activity)
+
+        # AL: like when there is a change of activity? or is it for all messages? 
+        self.activity_button = tk.Button(self.activity_frame, text="Update Activity", command=self.cycle_activity) 
         self.activity_button.pack(side=tk.LEFT)
         self.update_activities()  # Set the initial activity
 
@@ -83,6 +85,7 @@ class App:
         self.custom_input.pack(side=tk.LEFT)
 
         def send_and_clear():
+            # AL: put this definition at the end of the init function definition
             self.send_message_all(self.custom_input.get(), time.time_ns())
             self.custom_input.delete(0, 'end')
 
@@ -245,12 +248,12 @@ class App:
                         self.handlers.append(handler)
 
                 except asyncio.TimeoutError:
-                    # no more devices to be found, break the loop
+                    # No more device to be found, break the loop
                     break
 
-        # If no devices found, create a label and return
+        # If no device found, create a label and return
         if not self.handlers:
-            print("No devices could be found! Abort")
+            print("No devices could be found! Abort.")
             no_device_label = tk.Label(self.device_frame, text="No devices found.")
             no_device_label.pack()
             return
@@ -278,6 +281,7 @@ class App:
         message = "T"
         u_time = time.time_ns()
         self.send_message_all(message, u_time)
+        
     # ==== DEVICE DISPLAY ====
     async def get_device_info(self):
         return [await handler.get_info() for handler in sorted(self.handlers, key=lambda handler: handler.dev_info.name)]
