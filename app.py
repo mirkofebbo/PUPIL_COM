@@ -148,6 +148,7 @@ class App:
             self.csv_file.close()
             self.csv_file_is_open = False
 
+    #==== ATCIVITY TRACKER ====
     def update_activities(self):
         # Fetch the activities and P/NP status for the selected date and time
         selected_date = self.date_var.get()
@@ -165,12 +166,12 @@ class App:
     def cycle_activity(self):
         try:
             self.current_activity = next(self.activities_iter)
-            self.current_p_np = next(self.pnp_iter)
+            self.current_pnp = next(self.pnp_iter)
         except StopIteration:  # If end of activities list is reached, start over
             self.activities_iter = iter(self.activities)
             self.pnp_iter = iter(self.p_np)
             self.current_activity = next(self.activities_iter)
-            self.current_p_np = next(self.pnp_iter)
+            self.current_pnp = next(self.pnp_iter)
 
         self.activity_button.config(text=f"{self.current_activity} ({self.current_p_np})")  # Update button text
 
@@ -277,7 +278,7 @@ class App:
         message = "T"
         u_time = time.time_ns()
         self.send_message_all(message, u_time)
-    # ==== DISPLAY ====
+    # ==== DEVICE DISPLAY ====
     async def get_device_info(self):
         return [await handler.get_info() for handler in sorted(self.handlers, key=lambda handler: handler.dev_info.name)]
 
