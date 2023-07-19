@@ -7,10 +7,13 @@ import time
 import csv
 from datetime import datetime
 import os
+import json
+from datetime import datetime
+import pytz
 
-
-stages = ["NONE","THE_DANCE","UKULELE", "EATING_DRINKING", "SPOTIFY", "HOOVERING", "DOING_NOTHING", "GRIEF_EXERCISE", "PLANT_CARE", "POEM", "RITUAL_DANCE"]
+data = json.load(open("data/activity.json"))
 transitions = [ "PUT_ON_COSTUME", "CHANGE_COSTUME", "REMOVE_COSTUME"]
+
 class App:
 
     def __init__(self, root, loop):
@@ -18,61 +21,71 @@ class App:
         self.handlers = []
         self.loop = loop
         self.device_frame = tk.Frame(self.root)
-        self.device_frame.pack(fill=tk.X)  # This line has changed
+        self.device_frame.pack(fill=tk.X)  
+        self.is_any_recording = False 
 
-        # Initialize the CSV writer
         self.init_csv_writer()
 
-        self.is_any_recording = False  # State variable to track if any recording is in progress
-
-        # Create a frame for navbar
+        self.data = json.load(open("data/activity.json"))
         self.navbar_frame = tk.Frame(self.root)
-        self.navbar_frame.pack(fill=tk.X)  # Fill the X direction
+        self.navbar_frame.pack(fill=tk.X)
 
-        # Discover button
         self.discover_button = tk.Button(self.navbar_frame, text="Discover Devices", 
-                                         command=self.discover_devices_threadsafe)
-        self.discover_button.pack(side=tk.LEFT)  # This line has changed
+                                        command=self.discover_devices_threadsafe)
+        self.discover_button.pack(side=tk.LEFT)  
 
-        # Start all button
         self.start_all_button = tk.Button(self.navbar_frame, text="Start Recording All", 
-                                          command=self.toggle_recording_all)
-        self.start_all_button.pack(side=tk.LEFT)  # This line has changed
+                                        command=self.toggle_recording_all)
+        self.start_all_button.pack(side=tk.LEFT)  
 
-        # Send message button
-        message = "Placeholder"
-        self.send_button = tk.Button(self.navbar_frame, text="Send Message",
-                                     command=lambda: self.send_message_all(message, time.time_ns()))
-        self.send_button.pack(side=tk.LEFT)  # This line has changed
+        self.activity_frame = tk.Frame(self.root) 
+        self.activity_frame.pack(fill=tk.X)  
 
-        # Stage button
-        self.stages_iter = iter(stages)  # Create iterator from stages list
-        self.current_stage = next(self.stages_iter)  # Initialize to first stage
-        self.stage_button = tk.Button(self.navbar_frame, text=self.current_stage, command=self.cycle_stage)
-        self.stage_button.pack(side=tk.LEFT)
+        tk.Label(self.activity_frame, text="Current activity: ").pack(side=tk.LEFT) 
 
-        # Transition drop-down menu
-        self.transition_var = tk.StringVar(self.navbar_frame)
-        self.transition_var.set(transitions[0])  # set the initial value
-        # self.transition_menu = tk.OptionMenu(self.navbar_frame, self.transition_var, *transitions)
-        # self.transition_menu.pack(side=tk.LEFT)
-        self.transition_buttons = {}
-        self.transition_frame = tk.Frame(self.root)  # New frame for transition buttons
-        self.transition_frame.pack(fill=tk.X)  # Fill the X direction
+        # Fetch the current activity and P/NP status
+        current_date = datetime.now(pytz.timezone('GMT')).strftime('%d/%m/%Y')
+        current_time = datetime.now(pytz.timezone('CET')).hour
+        print("current_time", current_time)
 
-        tk.Label(self.transition_frame, text="CHANGING").pack(side=tk.LEFT)  # Text on the left
+        current_time = "15:00" if current_time < 5 else ("17:00" if current_time < 7 else "19:00")
+        print("current_date", current_date)
+        self.activities = data[current_date][current_time]["activity"]
+        self.p_np = data[current_date][current_time]["P/NP"]
+        self.activity_iter = iter(self.activities)
+        self.current_activity = "NONE"
+        self.current_pnp = "NONE"
+        self.activity_button = tk.Button(self.activity_frame, text=self.current_activity, command=self.cycle_activity)
+        self.activity_button.pack(side=tk.LEFT)
+        self.previous_activity = "NONE"
+        print(self.activities)
+        self.custom_frame = tk.Frame(self.root)  
+        self.custom_frame.pack(fill=tk.X) 
 
-        self.create_transition_buttons()
-        
-        self.previous_stage = "NONE"
-        self.previous_transition = self.transition_var.get()
+        self.custom_input = tk.Entry(self.custom_frame)
+        self.custom_input.pack(side=tk.LEFT)
 
-        # Heartbeat
+        def send_and_clear():
+            self.send_message_all(self.custom_input.get(), time.time_ns())
+            self.custom_input.delete(0, 'end')
+
+        self.custom_button = tk.Button(self.custom_frame, text="SEND", command=send_and_clear)
+        self.custom_button.pack(side=tk.LEFT)
+
+        self.custom_input.bind('<Return>', lambda _: send_and_clear())
+
+        self.laugh_button = tk.Button(self.custom_frame, text="LAUGHING", 
+                                    command=lambda: self.send_message_all("LAUGHING", time.time_ns()))
+        self.laugh_button.pack(side=tk.LEFT)
+
+        self.talk_button = tk.Button(self.custom_frame, text="PERFORMER_TALK", 
+                                    command=lambda: self.send_message_all("PERFORMER_TALK", time.time_ns()))
+        self.talk_button.pack(side=tk.LEFT)
+
         self.heartbeat()
 
-        # Keep track of all tasks
         self.tasks = []
-    
+        
 
     # ==== DATA LOGGING ====
     def init_csv_writer(self):
@@ -80,10 +93,10 @@ class App:
         data_dir = './data'
         os.makedirs(data_dir, exist_ok=True)
         now = datetime.now()
-        filename = f'{data_dir}/PERFO_{self.get_next_file_number()}_{now.strftime("%H-%M-%S-%f_%d-%m-%Y")}.csv'
+        filename = f'{data_dir}/PANP_{self.get_next_file_number()}_{now.strftime("%H-%M-%S-%f_%d-%m-%Y")}.csv'
         self.csv_file = open(filename, 'w', newline='')
         self.csv_writer = csv.writer(self.csv_file)
-        self.csv_writer.writerow(['U_TIME', 'HUMAN_TIME', 'MESSAGE', 'STAGE'])
+        self.csv_writer.writerow(['U_TIME', 'HUMAN_TIME', 'MESSAGE', 'STAGE', "P/NP"])
         self.csv_file_is_open = True
 
     def get_next_file_number(self):
@@ -94,47 +107,60 @@ class App:
         perfo_files = [f for f in files if f.startswith('PERFO_')]
         return len(perfo_files) + 1
 
-    def write_to_csv(self, u_time, message, stage):
+    def write_to_csv(self, u_time, message, stage, pnp):
         # Check if file is open before writing
         if self.csv_file_is_open:
             human_time = datetime.now().strftime('%H:%M:%S.%f')
-            self.csv_writer.writerow([u_time, human_time, message, stage])
+            self.csv_writer.writerow([u_time, human_time, message, stage, pnp])
 
     def close_csv(self):
         if self.csv_file_is_open:
             self.csv_file.close()
             self.csv_file_is_open = False
 
-    def cycle_stage(self):
+    def cycle_activity(self):
+        current_date = datetime.now().strftime("%d/%m/%Y")
+        current_hour = datetime.now().hour
+
+        if current_date in self.data:
+            timeslots = sorted([time for time in self.data[current_date]])
+            for time in timeslots:
+                if int(time.split(":")[0]) > current_hour:
+                    self.activities = self.data[current_date][time]["activity"]
+                    self.pnps = self.data[current_date][time]["P/NP"]
+                    break
+            else:
+                self.activities = self.data[current_date][timeslots[-1]]["activity"]
+                self.pnps = self.data[current_date][timeslots[-1]]["P/NP"]
+
+        if not hasattr(self, 'activities_iter') or not hasattr(self, 'pnps_iter'):  # If iterators are not initialized
+            self.activities_iter = iter(self.activities)  # Create iterator from activities list
+            self.pnps_iter = iter(self.pnps)  # Create iterator from P/NP list
+
         try:
-            self.current_stage = next(self.stages_iter)  # Get next stage
-        except StopIteration:
-            self.stages_iter = iter(stages)  # Reset iterator
-            self.current_stage = next(self.stages_iter)  # Get first stage
-        self.stage_button.config(text=self.current_stage)  # Update button text
+            self.current_activity = next(self.activities_iter)
+        except StopIteration:  # If end of activities list is reached, start over
+            self.activities_iter = iter(self.activities)
+            self.current_activity = next(self.activities_iter)
+
+        try:
+            self.current_pnp = next(self.pnps_iter)
+        except StopIteration:  # If end of P/NP list is reached, start over
+            self.pnps_iter = iter(self.pnps)
+            self.current_pnp = next(self.pnps_iter)
+
+        self.activity_button.config(text=f"{self.current_activity} ({self.current_pnp})")  # Update button text
 
     #==== SENDING MESSAGE ====
     def send_message_all(self, message, u_time):
-        current_transition = self.transition_var.get()
-
-        if self.current_stage != self.previous_stage:
-            formatted_message = f"{message} - Action: {self.current_stage}"
-            self.previous_stage = self.current_stage
-            stage = self.current_stage
-        elif current_transition != self.previous_transition:
-            formatted_message = f"{message} - Action: {current_transition}"
-            self.previous_transition = current_transition
-            stage = current_transition
-        else:
-            # Default message if neither stage nor transition has changed
-            formatted_message = f"{message} - Action: {self.previous_stage if self.previous_stage != 'NONE' else self.previous_transition}"
-            stage = self.previous_stage if self.previous_stage != 'NONE' else self.previous_transition
+        # Default message
+        formatted_message = f"{message} - Action: {self.current_activity} - P/NP: {self.current_pnp}"
 
         for handler in self.handlers:
             task = asyncio.run_coroutine_threadsafe(handler.send_message(formatted_message, u_time), self.loop)
             self.tasks.append(task)
 
-        self.write_to_csv(u_time, message, stage) 
+        self.write_to_csv(u_time, message, self.current_activity, self.current_pnp)
 
     def heartbeat(self):
         u_time = time.time_ns()
