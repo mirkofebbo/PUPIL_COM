@@ -5,13 +5,15 @@ HIGH:
 
 MEDIUM:
 - BUTTON audiance laugh, performer talk to audience, custom message
-- NEED UPDATE  update once in a while to see if we still have the phones/ not gettting update while it is called multiple time
+- NEED UPDATE update once in a while to see if we still have the phones/ not gettting update while it is called multiple time
 - - Then if we loos one lunch 2-3 search see if we can find it again 
 - Check if device is recrording using DeviceHandler print_recording [update the function print_recording]
 
 LOW: 
 - Work on the UI layout 
 - - UPDATED 
+
+[comment]: <> (I (Albane) could add an option to run the software in command line)  
 - 
 DONE
 -  Add dropdown menu to log in the current stage 
@@ -19,11 +21,13 @@ DONE
 
 # Pupil Labs Device Manager
 
-This project provides an interface to discover and control Pupil Labs devices using their Realtime API. It is built with Python's Tkinter for the user interface, and asyncio for managing the asynchronous communication with the devices.
+This project provides an interface to discover and control several Pupil Labs devices using their Realtime API. It is built with Python's Tkinter for the user interface, and asyncio for managing the asynchronous communication with the devices.
 
 ## Features
 
 - Discover Pupil Labs devices on the network
+
+[comment]: <> (instead of 'Discover Pupil Labs devices on the network' maybe 'See which Pupil Labs devices are connected to the network')  
 - Start/Stop recording on each individual device
 - Start/Stop recording on all devices simultaneously
 - Send a message to all devices
@@ -37,6 +41,8 @@ These instructions will get you a copy of the project up and running on your loc
 - Python 3.10+
 - Pupil Labs Realtime API package (pip install pupil_labs)
 
+[comment]: <> (suggestion: make a requirements.txt with the right versions)  
+
 ## Usage
 
 - Start the application and click on "Discover Devices" button to discover the Pupil Labs devices in the network.
@@ -49,13 +55,15 @@ These instructions will get you a copy of the project up and running on your loc
 
 Please read CONTRIBUTING.md for details on our code of conduct, and the process for submitting pull requests to us.
 
+[comment]: <> (where is this doc?)  
+
 ## License
 
 This project is licensed under the MIT License - see the LICENSE.md file for details.
 
 ## Acknowledgments
 
-- Thanks to Pupil Labs for providing the Realtime API
+- Thanks to Pupil Labs for providing the Realtime API.
 
 
 # Explaining the App Class
