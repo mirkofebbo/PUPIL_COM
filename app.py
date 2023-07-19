@@ -134,7 +134,7 @@ class App:
         data_dir = './data'
         os.makedirs(data_dir, exist_ok=True)
         files = [f for f in os.listdir(data_dir) if os.path.isfile(os.path.join(data_dir, f))]
-        perfo_files = [f for f in files if f.startswith('PERFO_')]
+        perfo_files = [f for f in files if f.startswith('PANP_')]
         return len(perfo_files) + 1
 
     def write_to_csv(self, u_time, message, stage, pnp):
