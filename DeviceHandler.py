@@ -68,7 +68,7 @@ class DeviceHandler:
             await self.device.send_event(f'{message} o:{u_time_offset} t:{u_time}', event_timestamp_unix_ns=newtime)
             # print(event)
         except:
-            print('Not found')
+            print(self.status.phone.device_name, ' Not found')
 
     @staticmethod
     def print_recording(status):
