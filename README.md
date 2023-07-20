@@ -1,6 +1,7 @@
 # TODO 
 HIGH:
 - SAVE CSV more often
+- DROP DEVICE THAT CANNOT BE REACH
 
 MEDIUM:
 - NEED UPDATE  update once in a while to see if we still have the phones/ not gettting update while it is called multiple time
