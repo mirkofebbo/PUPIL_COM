@@ -173,7 +173,7 @@ class App:
             self.current_activity = next(self.activities_iter)
             self.current_pnp = next(self.pnp_iter)
 
-        self.activity_button.config(text=f"{self.current_activity} ({self.current_p_np})")  # Update button text
+        self.activity_button.config(text=f"{self.current_activity} ({self.current_pnp})")  # Update button text
 
     #==== SENDING MESSAGE ====
     def send_message_all(self, message, u_time):
