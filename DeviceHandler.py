@@ -4,6 +4,9 @@ from pupil_labs.realtime_api import Device, StatusUpdateNotifier
 from pupil_labs.realtime_api.time_echo import TimeOffsetEstimator
 import time
 
+# I ip 192.168.0.253
+# E ip 192.168.0.13
+
 class DeviceHandler:
 
     def __init__(self, dev_info):
@@ -13,6 +16,7 @@ class DeviceHandler:
         self.is_recording = False
         self.record_button = None
         self.connected = True  # Add a connection status flag
+        self.name = None
 
     async def init_device(self):
         try:
