@@ -1,10 +1,8 @@
 # TODO 
 HIGH:
-- UPDATE Add if changing button just a MESSAGE not duration / or update it for duration like start changing stop changing button? 
 - SAVE CSV more often
 
 MEDIUM:
-- BUTTON audiance laugh, performer talk to audience, custom message
 - NEED UPDATE  update once in a while to see if we still have the phones/ not gettting update while it is called multiple time
 - - Then if we loos one lunch 2-3 search see if we can find it again 
 - Check if device is recrording using DeviceHandler print_recording [update the function print_recording]
@@ -12,10 +10,6 @@ MEDIUM:
 LOW: 
 - Work on the UI layout 
 - - UPDATED 
-- 
-DONE
--  Add dropdown menu to log in the current stage 
--  Find a way to link both stage and change so that in the data it show changing continuosly
 
 # Pupil Labs Device Manager
 
